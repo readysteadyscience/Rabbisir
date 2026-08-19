@@ -42,7 +42,7 @@ done < <(
   git ls-files --cached --others --exclude-standard -z -- \
     .github .gitignore ASSETS.md CHANGELOG.md CONTRIBUTING.md LICENSE \
     Legal NOTICE.md Package.resolved Package.swift README.md README.zh.md \
-    RuntimeProvenance Sources Tests docs scripts \
+    RuntimeProvenance Sources Tests docs scripts site \
     ':(exclude)Sources/RabbisirApp/**' \
     ':(exclude)Sources/RabbisirDEVApp/**' \
     ':(exclude)scripts/build-and-run.sh' \

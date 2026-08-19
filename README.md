@@ -15,7 +15,10 @@ This repository contains only the Rabbisir macOS application and the files requi
 - a small launcher, manifest, and reproducible provenance contract for the App-private vendor runtime;
 - public development, architecture, privacy, and legal documentation.
 
-It does not contain a standalone Web app, CLI product, documentation website, upstream examples, upstream development tooling, or internal product plans. Generated Node and runtime payloads are staged from a separate compatible upstream checkout and are excluded from Git.
+It also contains the minimal static source and manual deployment contract for the public GitHub Pages
+website. It does not contain a standalone Web app, CLI product, upstream examples, upstream
+development tooling, or internal product plans. Generated Node and runtime payloads are staged from
+a separate compatible upstream checkout and are excluded from Git.
 
 The public package is the reproducible open-source product flavor. It includes creator attribution,
 the Discord community destination, public Help, licensing, and GitHub feedback links. It does not
@@ -35,6 +38,7 @@ production entrypoint fails closed when that overlay or its required configurati
 scripts/build-fresh-public-product.sh RabbisirOpen debug
 scripts/test-public-swiftpm.sh
 scripts/build-and-run-open.sh --verify-first-run
+scripts/verify-pages-site.sh
 ```
 
 The public package exposes only `Rabbisir Open`. The build-and-run helper creates an unsigned App in
@@ -68,6 +72,7 @@ entry point.
 - [Code review and quality governance](docs/CODE_REVIEW.md)
 - [Release process](docs/RELEASING.md)
 - [Versioning policy](docs/VERSIONING.md)
+- [Public website boundary](docs/WEBSITE.md)
 - [Changelog](CHANGELOG.md)
 - [Privacy and local data](docs/PRIVACY.md)
 - [Asset ownership](ASSETS.md)

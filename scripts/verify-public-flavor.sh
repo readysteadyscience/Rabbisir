@@ -15,7 +15,7 @@ private_surface_pattern='OpenSource''Maintenance|Support''OpenSource|Rabbisir''S
 public_files=$(mktemp "${TMPDIR:-/tmp}/rabbisir-public-flavor.XXXXXX")
 trap 'rm -f "$public_files"' EXIT HUP INT TERM
 git ls-files --cached --others --exclude-standard -z -- \
-  Package.swift Sources Tests docs Legal scripts README.md README.zh.md NOTICE.md \
+  .github Package.swift Sources Tests docs Legal scripts site README.md README.zh.md NOTICE.md \
   ':(exclude)Sources/RabbisirApp/**' \
   ':(exclude)Sources/RabbisirDEVApp/**' \
   ':(exclude)scripts/build-and-run.sh' \

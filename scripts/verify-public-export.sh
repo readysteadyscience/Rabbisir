@@ -13,7 +13,7 @@ fail() {
 }
 
 [[ -d "$public_root" && "$public_root" != "/" ]] || fail "invalid public source root"
-expected_top_level=$'.github\n.gitignore\nAGENTS.md\nASSETS.md\nCHANGELOG.md\nCONTRIBUTING.md\nLICENSE\nLegal\nNOTICE.md\nPackage.resolved\nPackage.swift\nREADME.md\nREADME.zh.md\nRuntimeProvenance\nSources\nTests\ndocs\nscripts'
+expected_top_level=$'.github\n.gitignore\nAGENTS.md\nASSETS.md\nCHANGELOG.md\nCONTRIBUTING.md\nLICENSE\nLegal\nNOTICE.md\nPackage.resolved\nPackage.swift\nREADME.md\nREADME.zh.md\nRuntimeProvenance\nSources\nTests\ndocs\nscripts\nsite'
 actual_top_level="$(
   /usr/bin/find "$public_root" -mindepth 1 -maxdepth 1 -exec basename {} \; \
     | LC_ALL=C /usr/bin/sort
@@ -91,7 +91,8 @@ if xargs -0 rg -n "$framework_name|$private_surface_pattern" <"$file_list"; then
 fi
 
 cd "$public_root"
+scripts/verify-pages-site.sh
 /usr/bin/shasum -a 256 -c "$public_root/Legal/ASSET_MANIFEST.sha256" \
   >/dev/null || fail "a public asset differs from the reviewed manifest"
 
-print "verify-public-export: history, products, generated payloads, private surfaces, and assets are clean"
+print "verify-public-export: history, products, site, generated payloads, private surfaces, and assets are clean"

@@ -19,15 +19,18 @@ for required in \
   docs/DEVELOPMENT.md \
   docs/CODE_REVIEW.md \
   docs/RELEASING.md \
+  docs/WEBSITE.md \
   docs/VERSIONING.md \
   .github/pull_request_template.md \
   .github/workflows/ci.yml \
+  .github/workflows/pages.yml \
   scripts/build-and-run-open.sh \
   scripts/prepare-public-source.sh \
   scripts/public-source-fingerprint.mjs \
   scripts/verify-public-candidate.sh \
   scripts/verify-public-dependency-lock.mjs \
   scripts/verify-public-export.sh \
+  scripts/verify-pages-site.sh \
   scripts/rebuild-vendor-runtime.sh \
   scripts/build-fresh-public-product.sh \
   scripts/clean-derived-rabbisir-resource-bundles.sh \
@@ -48,6 +51,7 @@ for required in \
   Legal/LICENSE.upstream.txt \
   Legal/BRAND_ASSETS.md \
   Legal/ASSET_MANIFEST.sha256 \
+  Legal/SITE_ASSET_MANIFEST.sha256 \
   Legal/THIRD_PARTY_NOTICES.upstream.md \
   Legal/THIRD_PARTY_NOTICES.testing.md \
   Legal/UPSTREAM.md \
@@ -55,6 +59,18 @@ for required in \
   RuntimeProvenance/README.md \
   RuntimeProvenance/rabbisir-runtime.patch \
   RuntimeProvenance/deterministic-css-modules.patch \
+  site/.nojekyll \
+  site/rabbisir-site/index.html \
+  site/rabbisir-site/site.js \
+  site/rabbisir-site/styles.css \
+  site/assets/rabbisir/discord-symbol-blurple.svg \
+  site/assets/rabbisir/rabbisir-mark-dark.png \
+  site/assets/rabbisir/x-logo-white-v1.svg \
+  site/assets/rabbisir/yelzap-avatar.png \
+  site/assets/rabbisir/yelzap-wechat-qr-v1.png \
+  site/DOWNLOADS.md \
+  site/UPSTREAM.md \
+  site/LICENSE \
   Sources/RabbisirCore/Resources/VendorRuntime/manifest.json \
   Sources/RabbisirCore/Resources/VendorRuntime/provenance-contract.json
 do
@@ -62,6 +78,7 @@ do
 done
 
 scripts/verify-documentation-links.sh
+scripts/verify-pages-site.sh
 scripts/verify-code-review-governance.sh
 scripts/test-release-version-policy.sh
 scripts/test-runtime-provenance.sh
@@ -89,6 +106,8 @@ manifest_asset_list=$(sed -E 's/^[0-9a-f]{64}  //' Legal/ASSET_MANIFEST.sha256 |
 public_asset_list=$(find Sources/RabbisirCore/Resources/Brand -type f | sort)
 [ "$manifest_asset_list" = "$public_asset_list" ] \
   || fail "a public static asset is missing from the reviewed asset manifest"
+shasum -a 256 -c Legal/SITE_ASSET_MANIFEST.sha256 >/dev/null \
+  || fail "the public website asset differs from its reviewed manifest"
 for unlicensed_asset in \
   Sources/RabbisirCore/Resources/Brand/DeepSeekLogo.png \
   Sources/RabbisirCore/Resources/Brand/DiscordSymbolBlack.png \
@@ -130,6 +149,8 @@ then
 fi
 grep -q 'scripts/verify-public-repository.sh' .github/workflows/ci.yml \
   || fail "CI does not verify the public source boundary"
+grep -q 'scripts/verify-pages-site.sh' .github/workflows/ci.yml \
+  || fail "CI does not verify the public Pages capsule"
 if rg -n 'build-fresh-public-product|test-public-swiftpm|build-and-run-open' \
   .github/workflows/ci.yml
 then

@@ -15,7 +15,9 @@ Rabbisir 是独立产品，与 DeepSeek 不存在隶属、赞助或背书关系�
 - App 私有上游运行时的小型启动器、版本清单与可复现来源契约；
 - 公开的开发、架构、隐私和法律文档。
 
-本仓库不包含独立 Web App、CLI 产品、文档网站、上游示例、上游开发工具或内部产品计划。生成的 Node 与运行时载荷从独立的兼容上游检出或构建产物暂存，并由 Git 忽略。
+本仓库也包含公开 GitHub Pages 官网的最小静态源码与手动部署契约。它不包含独立 Web App、
+CLI 产品、上游示例、上游开发工具或内部产品计划。生成的 Node 与运行时载荷从独立的兼容
+上游检出或构建产物暂存，并由 Git 忽略。
 
 公开 Package 是可复现的开源产品变体，保留创作者归属、Discord 社区入口、公开帮助、
 许可证与 GitHub 反馈链接；不包含应用内更新器、自愿支持界面或主题/壁纸占位。
@@ -34,6 +36,7 @@ Rabbisir 是独立产品，与 DeepSeek 不存在隶属、赞助或背书关系�
 scripts/build-fresh-public-product.sh RabbisirOpen debug
 scripts/test-public-swiftpm.sh
 scripts/build-and-run-open.sh --verify-first-run
+scripts/verify-pages-site.sh
 ```
 
 公开 Package 只暴露 `Rabbisir Open`。构建运行脚本只会在专用临时目录创建未签名 App，
@@ -64,5 +67,6 @@ scripts/stage-vendor-runtime.sh <receipted-runtime-carrier-root> <node-distribut
 - [资源归属](ASSETS.md)
 - [上游兼容记录](Legal/UPSTREAM.md)
 - [运行时来源与可复现构建](RuntimeProvenance/README.md)
+- [公开官网边界](docs/WEBSITE.md)
 
 本地构建命令不会执行任何外部仓库或正式分发操作。

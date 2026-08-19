@@ -19,6 +19,9 @@ runtime is an App-private compatibility component, not a second product surface.
   reuse unreviewed derived resource bundles.
 - Keep public documentation current and concise. Internal plans, task transcripts, screenshots,
   personal paths, credentials, and unreleased distribution material do not belong here.
+- Keep the public website inside the reviewed static `site/` capsule and run
+  `scripts/verify-pages-site.sh` after website or Pages-workflow changes. Pages deployment remains a
+  separate, manual-only external transaction; a source push does not authorize website publication.
 
 See `docs/DELIVERY_WORKFLOW.md` for the separation between local evidence, independent review,
 repository governance, and separately authorized external actions.

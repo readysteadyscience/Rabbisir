@@ -27,6 +27,9 @@ jobs:
       - name: Verify documentation links
         run: scripts/verify-documentation-links.sh
 
+      - name: Verify public Pages capsule
+        run: scripts/verify-pages-site.sh
+
       - name: Verify public repository boundary
         run: scripts/verify-public-repository.sh
 
