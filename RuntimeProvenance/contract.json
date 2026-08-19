@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 3,
+  "manifest": {
+    "schemaVersion": 3,
+    "rabbisirVersion": "0.1.0"
+  },
+  "upstream": {
+    "repository": "https://github.com/deepseek-ai/deepseek-harness.git",
+    "commit": "47f943859bef60e4160492346772ded9b24f765a",
+    "tree": "f904efab9ef435201d6ba4da88a34d6366568272",
+    "version": "0.1.0-rc.5"
+  },
+  "patches": [
+    {
+      "path": "RuntimeProvenance/rabbisir-runtime.patch",
+      "sha256": "535515777513a6c42e645b7554b5f7a36f1c015b76f1f54eb3d7581204e486dc"
+    },
+    {
+      "path": "RuntimeProvenance/deterministic-css-modules.patch",
+      "sha256": "eb504cde4929c3890fadbbb5aff9ddff02b692137a5cc7b338543d6710234465"
+    }
+  ],
+  "toolchain": {
+    "nodeVersion": "24.19.0",
+    "nodeDistribution": "node-v24.19.0-darwin-arm64.tar.gz",
+    "nodeArchiveURL": "https://nodejs.org/dist/v24.19.0/node-v24.19.0-darwin-arm64.tar.gz",
+    "nodeArchiveSHA256": "8294b7aa9b03997481c06babf1e8b270c859358f27da57a11509afe537ac381d",
+    "nodeBinarySHA256": "27db838bb204ef7c21df2931f5656e4c8fb32e6e947f363a402b49714d32b5b1",
+    "packageManager": "pnpm@11.7.0",
+    "packageManagerArchiveURL": "https://registry.npmjs.org/pnpm/-/pnpm-11.7.0.tgz",
+    "packageManagerArchiveSHA256": "deafa7ec98a1218b6a047289b92fbe2395c1e22d3495bb711653013218ee15ee",
+    "packageManagerExecutable": "package/bin/pnpm.cjs"
+  },
+  "build": {
+    "upstreamLockSHA256": "6177ec61bdb8194eb5a606813a62ffb0ab2cc7fdfe2cd6e0249dcbfe4bce58e0",
+    "derivedInjectedLockSHA256": "b20cc508f444c25929230ceef9128e0b03af336c839502b5edf74061fc9a7d88",
+    "workspaceInjection": true,
+    "nodeLinker": "hoisted",
+    "sequentialClientBundles": 39,
+    "runtimeSupplement": "vendor/group",
+    "requiredWorkspacePeerSupplements": 14,
+    "fullLibraryOverlays": [
+      "@deepseek-ai/dsh-client-runtime",
+      "@deepseek-ai/dsh-client-ui-conversation",
+      "@deepseek-ai/dsh-client-ui-sidebar"
+    ],
+    "normalizedSourceRoot": "rabbisir-upstream-source"
+  },
+  "launch": {
+    "executable": "bin/rabbisir-runtime",
+    "node": "bin/node",
+    "nodeSpawnHelper": "bin/node-spawn-helper"
+  },
+  "output": {
+    "algorithm": "sha256(canonical-path-mode-content-v1)",
+    "digest": "1d13cdad0d1751f9a861caae704fd378e552c512fa32ef8a74a7295e23afa1ed",
+    "fileCount": 31738,
+    "symlinkCount": 12,
+    "nativeProjection": {
+      "path": "node/node_modules/@deepseek-ai/dsh-client-ui-conversation/lib/types/client/native-projection.js",
+      "sha256": "1677d08c98233f54e29e3342b811ea4e0a533f6c99eb859887cd89e262559311"
+    }
+  }
+}

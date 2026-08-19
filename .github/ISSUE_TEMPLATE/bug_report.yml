@@ -1,0 +1,40 @@
+name: Bug report
+description: Report a reproducible Rabbisir problem without private data.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include credentials, private data, or internal runtime payloads.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Provide the smallest reproducible sequence using a temporary Rabbisir Open build when possible.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Rabbisir version
+      placeholder: Version and build shown in About Rabbisir
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized evidence
+      description: Include only public-safe diagnostics needed to reproduce the problem.

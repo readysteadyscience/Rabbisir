@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Public source and format
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Select Xcode
+        run: sudo xcode-select --switch /Applications/Xcode.app
+
+      - name: Verify documentation links
+        run: scripts/verify-documentation-links.sh
+
+      - name: Verify public repository boundary
+        run: scripts/verify-public-repository.sh
+
+      - name: Verify code review governance
+        run: scripts/verify-code-review-governance.sh
+
+      - name: Verify release version policy
+        run: scripts/test-release-version-policy.sh
+
+      - name: Lint Swift formatting
+        run: xcrun swift-format lint --strict --recursive Package.swift Sources Tests
+
+      # Generated runtime payloads are intentionally absent from Git. Full App build and native
+      # tests run only after a receipted runtime has been staged with the documented local gate.

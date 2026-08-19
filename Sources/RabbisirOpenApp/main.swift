@@ -1,0 +1,3 @@
+import RabbisirCore
+
+RabbisirApplication.runOpenSource()

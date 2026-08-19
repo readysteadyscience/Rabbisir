@@ -1,0 +1,32 @@
+#!/bin/sh
+set -eu
+runtime_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+app_pid=$PPID
+runtime_pid=
+watchdog_pid=
+
+stop_runtime() {
+  if [ -n "$runtime_pid" ] && kill -0 "$runtime_pid" 2>/dev/null; then
+    kill -TERM "$runtime_pid" 2>/dev/null || true
+  fi
+  if [ -n "$watchdog_pid" ] && kill -0 "$watchdog_pid" 2>/dev/null; then
+    kill -TERM "$watchdog_pid" 2>/dev/null || true
+  fi
+}
+
+trap stop_runtime HUP INT TERM EXIT
+"$runtime_root/bin/node" "$runtime_root/node/lib/bin.js" "$@" &
+runtime_pid=$!
+(
+  while kill -0 "$app_pid" 2>/dev/null && kill -0 "$runtime_pid" 2>/dev/null; do
+    sleep 1
+  done
+  if ! kill -0 "$app_pid" 2>/dev/null && kill -0 "$runtime_pid" 2>/dev/null; then
+    kill -TERM "$runtime_pid" 2>/dev/null || true
+  fi
+) &
+watchdog_pid=$!
+
+status=0
+wait "$runtime_pid" || status=$?
+exit "$status"
