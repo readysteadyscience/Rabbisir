@@ -21,6 +21,8 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Verify Pages capsule
+        env:
+          RABBISIR_PUBLIC_SOURCE_EXPORT: "true"
         run: scripts/verify-pages-site.sh
 
       - name: Configure GitHub Pages

@@ -9,6 +9,30 @@ fail() {
   exit 1
 }
 
+reject_pattern() {
+  reason=$1
+  pattern=$2
+  shift 2
+  if LC_ALL=C grep -ErIn -- "$pattern" "$@"; then
+    fail "$reason"
+  else
+    grep_result=$?
+    [ "$grep_result" -eq 1 ] || fail "the Pages pattern scan failed"
+  fi
+}
+
+reject_pattern_i() {
+  reason=$1
+  pattern=$2
+  shift 2
+  if LC_ALL=C grep -ErIin -- "$pattern" "$@"; then
+    fail "$reason"
+  else
+    grep_result=$?
+    [ "$grep_result" -eq 1 ] || fail "the Pages pattern scan failed"
+  fi
+}
+
 for required in \
   site/.nojekyll \
   site/index.html \
@@ -100,10 +124,10 @@ cmp -s LICENSE site/LICENSE \
   || fail "the Pages-local license differs from the reviewed Rabbisir root license"
 
 private_site_pattern='app''cast|spar''kle|support rab''bisir|appear''ance|wall''paper|official''overlay|overlay''receipt|developer id app''lication:|apple team i''d|begin (rsa |ec |openssh )?private ke''y|/use''rs/[^/ ]+|/pri''vate/tm''p/|deepseek_api''_key[[:space:]]*='
-if rg -n -i "$private_site_pattern" site/index.html site/styles.css site/site.js site/assets site/DOWNLOADS.md site/UPSTREAM.md site/LICENSE
-then
-  fail "private, official-only, credential, or local-path material entered the site"
-fi
+reject_pattern_i \
+  "private, official-only, credential, or local-path material entered the site" \
+  "$private_site_pattern" \
+  site/index.html site/styles.css site/site.js site/assets site/DOWNLOADS.md site/UPSTREAM.md site/LICENSE
 
 python3 - <<'PY'
 from html.parser import HTMLParser
@@ -222,14 +246,13 @@ if failures:
     sys.exit(1)
 PY
 
-if rg -n '@import|url\(' site/styles.css; then
-  fail "the reviewed stylesheet unexpectedly loads another resource"
-fi
-if rg -n 'fetch\(|XMLHttpRequest|WebSocket|EventSource|sendBeacon|document\.cookie|window\.open|location\.|eval\(|new Function' \
+reject_pattern \
+  "the reviewed stylesheet unexpectedly loads another resource" \
+  '@import|url\(' site/styles.css
+reject_pattern \
+  "the reviewed interaction script gained a network, cookie, navigation, or dynamic-code path" \
+  'fetch\(|XMLHttpRequest|WebSocket|EventSource|sendBeacon|document\.cookie|window\.open|location\.|eval\(|new Function' \
   site/site.js
-then
-  fail "the reviewed interaction script gained a network, cookie, navigation, or dynamic-code path"
-fi
 grep -q '<meta name="color-scheme" content="dark">' site/index.html \
   || fail "the final fixed-dark document metadata is missing"
 grep -q '<meta name="theme-color" content="#080a0d">' site/index.html \
@@ -252,11 +275,10 @@ grep -q '与 DeepSeek 不存在隶属、赞助或背书关系' site/index.html \
 grep -q '<span class="wechat-profile-label" data-en="WeChat" data-zh="微信">WeChat</span>' \
   site/index.html \
   || fail "the explicit bilingual WeChat contact entry is missing"
-if rg -n -i 'deepseek[^<]*(logo|mark|avatar)|deepseek-(logo|mark|avatar)|wechat[^<]*(logo|mark)|wechat-(logo|mark)' \
+reject_pattern_i \
+  "an excluded DeepSeek graphic or unverified WeChat graphic entered the site" \
+  'deepseek[^<]*(logo|mark|avatar)|deepseek-(logo|mark|avatar)|wechat[^<]*(logo|mark)|wechat-(logo|mark)' \
   site/index.html site/assets
-then
-  fail "an excluded DeepSeek graphic or unverified WeChat graphic entered the site"
-fi
 
 grep -q 'cabcd17d40403a73b3eac517dfcc02e2df3a42b32a68093307f727080d1f9f28' docs/WEBSITE.md \
   || fail "the final website source baseline is not recorded"
@@ -285,6 +307,8 @@ grep -q "if: github.ref == 'refs/heads/main'" "$pages_workflow" \
   || fail "Pages deployment is not restricted to main"
 grep -q 'run: scripts/verify-pages-site.sh' "$pages_workflow" \
   || fail "Pages workflow does not verify the site before packaging"
+grep -q '^          RABBISIR_PUBLIC_SOURCE_EXPORT: "true"$' "$pages_workflow" \
+  || fail "Pages workflow does not use the public-export verification mode"
 grep -q 'actions/checkout@11d5960a326750d5838078e36cf38b85af677262' "$pages_workflow" \
   || fail "Pages checkout action is not pinned"
 grep -q 'actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d' "$pages_workflow" \

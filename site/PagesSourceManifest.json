@@ -37,12 +37,12 @@
   "verification": {
     "downloadsSHA256": "37d0489163b2aca4a788ed644fe90ba23c8d787b4b560ebc9ff2693ae7f740a5",
     "governanceSHA256": "f6379ccea8467f136346e60a6ff08a4c5973cf9b7cdc1ee7c5e24472aaf4497f",
-    "pagesSHA256": "afe25514ecbed96b8305b27907a803df4c0fb9e1bac1e08388c9f4730a75d802",
+    "pagesSHA256": "91b404befadb402a587ca28698d1540234f9141ff8bd916c23050d2a80ee3be7",
     "publicRepositorySHA256": "7e4f51603d06023dc45dcc10bdba127dab994377d64eb2b3e09366c4dd9d3480"
   },
   "workflow": {
     "path": ".github/workflows/pages.yml",
     "ref": "refs/heads/main",
-    "sha256": "ca4b9b0655007cba0850bef19366920d534418fbac66809fe1ad9bf8831b267e"
+    "sha256": "2d111f9506d224e4c93cdb1f926f68518bc35d609552dc2f6adfe037c43fc1c9"
   }
 }
