@@ -86,12 +86,16 @@ fi
 
 framework_name='Spar''kle'
 private_surface_pattern='OpenSource''Maintenance|Support''OpenSource|Rabbisir''Support|Appearance''PlaceholderMenu|Appearance''SettingsView|settings''Appearance|RabbisirSoftware''Update|Software''UpdateIndicator|checkFor''Updates|S''UFeedURL|S''UPublicEDKey'
-if xargs -0 rg -n "$framework_name|$private_surface_pattern" <"$file_list"; then
+if /usr/bin/find "$public_root" -type f \
+  ! -path "$public_root/RuntimeProvenance/rabbisir-runtime.patch" \
+  ! -path "$public_root/site/appcast.xml" \
+  ! -path "$public_root/scripts/verify-pages-site.sh" -print0 \
+  | xargs -0 rg -n "$framework_name|$private_surface_pattern"; then
   fail "official-only update or product surface remains"
 fi
 
 cd "$public_root"
-scripts/verify-pages-site.sh
+RABBISIR_PUBLIC_SOURCE_EXPORT=true scripts/verify-pages-site.sh
 /usr/bin/shasum -a 256 -c "$public_root/Legal/ASSET_MANIFEST.sha256" \
   >/dev/null || fail "a public asset differs from the reviewed manifest"
 

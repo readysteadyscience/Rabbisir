@@ -16,32 +16,16 @@ test -f docs/DEVELOPMENT.md || fail "missing docs/DEVELOPMENT.md"
 test -f docs/DELIVERY_WORKFLOW.md || fail "missing docs/DELIVERY_WORKFLOW.md"
 test -f docs/RELEASING.md || fail "missing docs/RELEASING.md"
 
-grep -q '^## Seven-stage delivery governance$' AGENTS.md \
-  || fail "AGENTS.md lacks the seven-stage delivery governance"
-grep -q '1\. \*\*Primary development\*\*' AGENTS.md \
-  || fail "AGENTS.md lacks the primary-development stage"
-grep -q '2\. \*\*Private official-app review\*\*' AGENTS.md \
-  || fail "AGENTS.md lacks the private official-app review stage"
-grep -q 'independent review is read-only' AGENTS.md \
-  || fail "AGENTS.md lacks the read-only review boundary"
-grep -q 'independent reviewer must re-verify' AGENTS.md \
-  || fail "AGENTS.md lacks the repair re-verification rule"
-grep -q 'It reports defects to primary development; a pass hands the' AGENTS.md \
-  || fail "AGENTS.md lacks the defect-return and passing-review handoff"
-grep -q 'frozen candidate to private-repository governance' AGENTS.md \
-  || fail "AGENTS.md lacks the stage 2 to stage 3 handoff"
-grep -q 'Automatic handoff means sending the candidate, scope, evidence, residual risks, and blockers' AGENTS.md \
-  || fail "AGENTS.md lacks the automatic evidence-handoff contract"
-grep -q 'It never performs an external action' AGENTS.md \
-  || fail "AGENTS.md lacks the no-external-action handoff boundary"
-grep -q 'Do not append work to a task that is currently executing' AGENTS.md \
-  || fail "AGENTS.md lacks the active-task addition boundary"
-grep -q 'Sub agents never start automatically' AGENTS.md \
-  || fail "AGENTS.md lacks the Sub agent assessment rule"
-grep -q 'Do not split work merely for parallelism' AGENTS.md \
-  || fail "AGENTS.md lacks the sequential-operation rule"
-grep -q 'Before using Sub agents, state the split' AGENTS.md \
-  || fail "AGENTS.md lacks the Sub agent integration rule"
+grep -q '^# Rabbisir public-source development rules$' AGENTS.md \
+  || fail "AGENTS.md lacks the public-source development rules"
+grep -q 'Never commit, push, publish, sign, notarize, deploy, install,' AGENTS.md \
+  || fail "AGENTS.md lacks the external-action authorization boundary"
+grep -q 'Public builds use only the `RabbisirOpen` product' AGENTS.md \
+  || fail "AGENTS.md lacks the public product boundary"
+grep -q 'Pages deployment remains a' AGENTS.md \
+  || fail "AGENTS.md lacks the independent Pages deployment boundary"
+grep -q 'See `docs/DELIVERY_WORKFLOW.md` for the separation' AGENTS.md \
+  || fail "AGENTS.md lacks the delivery-governance reference"
 grep -q 'Read-only review boundary' docs/CODE_REVIEW.md \
   || fail "CODE_REVIEW.md lacks the read-only boundary"
 grep -q 'Finding severity' docs/CODE_REVIEW.md \
