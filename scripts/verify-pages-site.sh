@@ -11,9 +11,9 @@ fail() {
 
 for required in \
   site/.nojekyll \
-  site/rabbisir-site/index.html \
-  site/rabbisir-site/styles.css \
-  site/rabbisir-site/site.js \
+  site/index.html \
+  site/styles.css \
+  site/site.js \
   site/assets/rabbisir/discord-symbol-blurple.svg \
   site/assets/rabbisir/rabbisir-mark-dark.png \
   site/assets/rabbisir/x-logo-white-v1.svg \
@@ -39,14 +39,16 @@ expected_site_files=$(printf '%s\n' \
   'assets/rabbisir/x-logo-white-v1.svg' \
   'assets/rabbisir/yelzap-avatar.png' \
   'assets/rabbisir/yelzap-wechat-qr-v1.png' \
-  'rabbisir-site/index.html' \
-  'rabbisir-site/site.js' \
-  'rabbisir-site/styles.css')
+  'index.html' \
+  'site.js' \
+  'styles.css')
 actual_site_files=$(find site -type f -print | sed 's#^site/##' | LC_ALL=C sort)
 [ "$actual_site_files" = "$expected_site_files" ] \
   || fail "site file allowlist differs from the reviewed Pages closure"
 
 test ! -s site/.nojekyll || fail ".nojekyll must remain empty"
+test ! -e site/rabbisir-site \
+  || fail "the legacy nested Pages route must not remain in the artifact"
 if find site -type l -print | grep -q .; then
   fail "symbolic links are not allowed in the Pages capsule"
 fi
@@ -59,12 +61,12 @@ verify_sha256() {
     || fail "$file differs from the reviewed public-candidate digest"
 }
 
-verify_sha256 80e3bd249e79e7ac16e2c73919ccfcb6f6e19c962b3c036fda3a967eb57d351c \
-  site/rabbisir-site/index.html
+verify_sha256 c024ce612271d548157d230e2fb087d0c01a95d5ec60658d98f1d538b1cd676b \
+  site/index.html
 verify_sha256 f3a44a62c2a1eb3ff97c321bf9e3cc54d3c50fb4252bebd8c04fbabfe8417095 \
-  site/rabbisir-site/styles.css
+  site/styles.css
 verify_sha256 fe5fbcfe213e9a0d487b6f84fbf8beb6db0d6e10525d3625ddb869d19aca0ba6 \
-  site/rabbisir-site/site.js
+  site/site.js
 verify_sha256 296286aa112c4400af8e96191ab888f81abd4bd1d5dc7294112a622ef43581b1 \
   site/assets/rabbisir/discord-symbol-blurple.svg
 verify_sha256 3eb50dd54404dbedb76a1c1b6dae85fb058e274cff0629c500d6379fddb8ab7c \
@@ -103,7 +105,7 @@ import sys
 
 root = Path.cwd()
 site_root = (root / "site").resolve()
-html_path = site_root / "rabbisir-site" / "index.html"
+html_path = site_root / "index.html"
 text = html_path.read_text(encoding="utf-8")
 
 
@@ -157,7 +159,7 @@ if forbidden_tags.intersection(parser.tags):
     failures.append("the reviewed site gained inline, framed, or embedded content")
 
 expected_resources = {
-    ("icon", "../assets/rabbisir/rabbisir-mark-dark.png"),
+    ("icon", "assets/rabbisir/rabbisir-mark-dark.png"),
     ("stylesheet", "styles.css"),
 }
 if set(parser.resources) != expected_resources:
@@ -165,12 +167,12 @@ if set(parser.resources) != expected_resources:
 if parser.scripts != [("site.js?v=20260815-wechat2", True)]:
     failures.append("the reviewed deferred local script reference changed")
 if parser.images != [
-    "../assets/rabbisir/rabbisir-mark-dark.png",
-    "../assets/rabbisir/discord-symbol-blurple.svg",
-    "../assets/rabbisir/rabbisir-mark-dark.png",
-    "../assets/rabbisir/yelzap-avatar.png",
-    "../assets/rabbisir/x-logo-white-v1.svg",
-    "../assets/rabbisir/yelzap-wechat-qr-v1.png",
+    "assets/rabbisir/rabbisir-mark-dark.png",
+    "assets/rabbisir/discord-symbol-blurple.svg",
+    "assets/rabbisir/rabbisir-mark-dark.png",
+    "assets/rabbisir/yelzap-avatar.png",
+    "assets/rabbisir/x-logo-white-v1.svg",
+    "assets/rabbisir/yelzap-wechat-qr-v1.png",
 ]:
     failures.append("the reviewed local image closure changed")
 
@@ -179,9 +181,9 @@ expected_hrefs = {
     "https://github.com/deepseek-ai/deepseek-harness",
     "https://discord.gg/gT4TUHGkQm",
     "https://x.com/YelZap1987",
-    "../DOWNLOADS.md",
-    "../UPSTREAM.md",
-    "../LICENSE",
+    "DOWNLOADS.md",
+    "UPSTREAM.md",
+    "LICENSE",
 }
 if set(parser.hrefs) != expected_hrefs:
     failures.append("the reviewed navigation destinations changed")
@@ -212,38 +214,38 @@ if failures:
     sys.exit(1)
 PY
 
-if rg -n '@import|url\(' site/rabbisir-site/styles.css; then
+if rg -n '@import|url\(' site/styles.css; then
   fail "the reviewed stylesheet unexpectedly loads another resource"
 fi
 if rg -n 'fetch\(|XMLHttpRequest|WebSocket|EventSource|sendBeacon|document\.cookie|window\.open|location\.|eval\(|new Function' \
-  site/rabbisir-site/site.js
+  site/site.js
 then
   fail "the reviewed interaction script gained a network, cookie, navigation, or dynamic-code path"
 fi
-grep -q '<meta name="color-scheme" content="dark">' site/rabbisir-site/index.html \
+grep -q '<meta name="color-scheme" content="dark">' site/index.html \
   || fail "the final fixed-dark document metadata is missing"
-grep -q '<meta name="theme-color" content="#080a0d">' site/rabbisir-site/index.html \
+grep -q '<meta name="theme-color" content="#080a0d">' site/index.html \
   || fail "the final dark browser theme is missing"
-grep -q -- '--background: #080a0d;' site/rabbisir-site/styles.css \
+grep -q -- '--background: #080a0d;' site/styles.css \
   || fail "the final #080a0d background is missing"
-grep -q '@media (prefers-reduced-motion: reduce)' site/rabbisir-site/styles.css \
+grep -q '@media (prefers-reduced-motion: reduce)' site/styles.css \
   || fail "the final reduced-motion path is missing"
-grep -q 'const languageStorageKey = "rabbisir-language";' site/rabbisir-site/site.js \
+grep -q 'const languageStorageKey = "rabbisir-language";' site/site.js \
   || fail "the bounded language preference key changed"
-grep -q 'wechatDialog.showModal();' site/rabbisir-site/site.js \
+grep -q 'wechatDialog.showModal();' site/site.js \
   || fail "the reviewed creator-contact dialog no longer opens"
 grep -q 'data-en="Built on DeepSeek Harness" data-zh="基于 DeepSeek Harness 构建"' \
-  site/rabbisir-site/index.html \
+  site/index.html \
   || fail "the prominent bilingual DeepSeek Harness attribution is missing"
-grep -q 'Not affiliated with, sponsored by, or endorsed by DeepSeek' site/rabbisir-site/index.html \
+grep -q 'Not affiliated with, sponsored by, or endorsed by DeepSeek' site/index.html \
   || fail "the English independence disclaimer is missing"
-grep -q '与 DeepSeek 不存在隶属、赞助或背书关系' site/rabbisir-site/index.html \
+grep -q '与 DeepSeek 不存在隶属、赞助或背书关系' site/index.html \
   || fail "the Chinese independence disclaimer is missing"
 grep -q '<span class="wechat-profile-label" data-en="WeChat" data-zh="微信">WeChat</span>' \
-  site/rabbisir-site/index.html \
+  site/index.html \
   || fail "the explicit bilingual WeChat contact entry is missing"
 if rg -n -i 'deepseek[^<]*(logo|mark|avatar)|deepseek-(logo|mark|avatar)|wechat[^<]*(logo|mark)|wechat-(logo|mark)' \
-  site/rabbisir-site site/assets
+  site/index.html site/assets
 then
   fail "an excluded DeepSeek graphic or unverified WeChat graphic entered the site"
 fi

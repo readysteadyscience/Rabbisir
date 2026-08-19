@@ -5,7 +5,7 @@ baseline come from the project owner's final historical Rabbisir website snapsho
 
 | Baseline file | Source SHA-256 | Public-candidate SHA-256 |
 | --- | --- | --- |
-| `rabbisir-site/index.html` | `cabcd17d40403a73b3eac517dfcc02e2df3a42b32a68093307f727080d1f9f28` | `80e3bd249e79e7ac16e2c73919ccfcb6f6e19c962b3c036fda3a967eb57d351c` |
+| `rabbisir-site/index.html` | `cabcd17d40403a73b3eac517dfcc02e2df3a42b32a68093307f727080d1f9f28` | `c024ce612271d548157d230e2fb087d0c01a95d5ec60658d98f1d538b1cd676b` |
 | `rabbisir-site/styles.css` | `468469c53cbd495c4677bca1301b9cd6b70a937f834053ef452a187e14b954af` | `f3a44a62c2a1eb3ff97c321bf9e3cc54d3c50fb4252bebd8c04fbabfe8417095` |
 | `rabbisir-site/site.js` | `fe5fbcfe213e9a0d487b6f84fbf8beb6db0d6e10525d3625ddb869d19aca0ba6` | `fe5fbcfe213e9a0d487b6f84fbf8beb6db0d6e10525d3625ddb869d19aca0ba6` |
 
@@ -29,11 +29,12 @@ boundaries in [`Legal/BRAND_ASSETS.md`](../Legal/BRAND_ASSETS.md). DeepSeek grap
 WeChat graphics are forbidden from the capsule. Third-party marks and creator identity/contact
 assets are not licensed under Rabbisir's MIT source license.
 
-The deployed page path is `/rabbisir-site/`. Keeping the page below the artifact root lets its
-reviewed `../assets`, `../DOWNLOADS.md`, `../UPSTREAM.md`, and `../LICENSE` references resolve without
-runtime rewriting. The script stores only the language choice under `rabbisir-language`; it contains
-no fetch, analytics, cookies, credentials, update path, payment path, or automatic external
-navigation.
+The deployed page path is the Pages artifact root. The public candidate moves the three reviewed
+page files from their historical `rabbisir-site/` source directory to [`site/`](../site) and changes
+only `index.html`'s relative dependency paths from the parent directory to that root. The stylesheet
+and script remain byte-identical to the reviewed candidate, and no runtime rewriting is used. The
+script stores only the language choice under `rabbisir-language`; it contains no fetch, analytics,
+cookies, credentials, update path, payment path, or automatic external navigation.
 
 Run the local and CI-equivalent gates before handing the site to open-source governance:
 
@@ -56,7 +57,7 @@ App.
 
 ## 中文边界
 
-公开 GitHub Pages 打包根是 [`site/`](../site)。页面以项目所有者指定的最终黑底极简官网为
+公开 GitHub Pages 打包根及页面入口都是 [`site/`](../site)。页面以项目所有者指定的最终黑底极简官网为
 视觉与交互基线，只作上文列出的公开资产最小适配：移除 DeepSeek 图形但保留醒目的双语
 文字上游链接和独立性声明；X 使用官方工具包原字节；微信因官方资源链未闭合而使用清晰
 文字入口，并继续打开已授权公开的创作者联系二维码；Discord 与创作者头像使用项目中已经

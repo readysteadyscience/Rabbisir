@@ -60,9 +60,9 @@ for required in \
   RuntimeProvenance/rabbisir-runtime.patch \
   RuntimeProvenance/deterministic-css-modules.patch \
   site/.nojekyll \
-  site/rabbisir-site/index.html \
-  site/rabbisir-site/site.js \
-  site/rabbisir-site/styles.css \
+  site/index.html \
+  site/site.js \
+  site/styles.css \
   site/assets/rabbisir/discord-symbol-blurple.svg \
   site/assets/rabbisir/rabbisir-mark-dark.png \
   site/assets/rabbisir/x-logo-white-v1.svg \
