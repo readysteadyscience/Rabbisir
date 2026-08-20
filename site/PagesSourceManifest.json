@@ -1,0 +1,48 @@
+{
+  "files": [
+    {
+      "name": "appcast.xml",
+      "sha256": "3612a67ec567dec41e665c7dc33f49d0ec3971a02edccd89424888ca50344df9",
+      "size": 1334
+    },
+    {
+      "name": "checksums.txt",
+      "sha256": "232398aae0724c563507773342c3f700d52f03f4275561ee5295d45d61e9ef8d",
+      "size": 367
+    },
+    {
+      "name": "release.json",
+      "sha256": "9f17a11c086e45f48ce9f15c1bb01ea6f4a18baeef98d9c14f4eb3c1888bc239",
+      "size": 1320
+    }
+  ],
+  "publicAppcastURL": "https://readysteadyscience.github.io/Rabbisir/appcast.xml",
+  "publicBase": {
+    "commit": "e7b4701751767af2178474dbc2023a7d69a860ec",
+    "tree": "f410dba77eb21ad26e322241538d761887f222ea"
+  },
+  "releaseTag": "v0.1.0-r1.01",
+  "schemaVersion": 2,
+  "runtime": {
+    "contractSHA256": "81335a2a536338f095f7c77beb4f54fc8fe02e69728e701cfb35af54754ed053",
+    "receiptSHA256": "9b32d0d21b8146a830f4e95978a0c1485fefb3ab062e2ee788ca3342e46fbc95",
+    "tree": {
+      "algorithm": "sha256(complete-path-kind-mode-content-v1)",
+      "digest": "b82348f4ff7d7ef9155499d4d9ba952bb1056e96eb408140d929bf35435d88e3",
+      "directoryCount": 3265,
+      "fileCount": 31745,
+      "symlinkCount": 12
+    }
+  },
+  "verification": {
+    "downloadsSHA256": "c249ba284ef2460f1f0e6de64b41a02eaf9f7fca737f1501b762a8e0ba3d21a3",
+    "governanceSHA256": "934d38fafaf3826171a3d8143919490dbcca5b1a0f8b4193ef8b99426c4e2928",
+    "pagesSHA256": "754f6a328c09c0de3784168dcc768e77a75709d4de6a027308662af22c0f5f20",
+    "publicRepositorySHA256": "e2df383d02950e7d4a39cd7a9faa91a45fd08e612bede8513a72553e5c2203f4"
+  },
+  "workflow": {
+    "path": ".github/workflows/pages.yml",
+    "ref": "refs/heads/main",
+    "sha256": "2d111f9506d224e4c93cdb1f926f68518bc35d609552dc2f6adfe037c43fc1c9"
+  }
+}

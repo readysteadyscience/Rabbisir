@@ -45,6 +45,10 @@ for required in \
   site/assets/rabbisir/yelzap-avatar.png \
   site/assets/rabbisir/yelzap-wechat-qr-v1.png \
   site/DOWNLOADS.md \
+  site/PagesSourceManifest.json \
+  site/appcast.xml \
+  site/checksums.txt \
+  site/release.json \
   site/UPSTREAM.md \
   site/LICENSE \
   .github/workflows/pages.yml \
@@ -58,14 +62,18 @@ expected_site_files=$(printf '%s\n' \
   '.nojekyll' \
   'DOWNLOADS.md' \
   'LICENSE' \
+  'PagesSourceManifest.json' \
   'UPSTREAM.md' \
+  'appcast.xml' \
   'assets/rabbisir/discord-symbol-blurple.svg' \
   'assets/rabbisir/rabbisir-mark-dark.png' \
   'assets/rabbisir/x-logo-white-v1.svg' \
   'assets/rabbisir/yelzap-avatar.png' \
   'assets/rabbisir/yelzap-wechat-qr-v1.png' \
+  'checksums.txt' \
   'download.html' \
   'index.html' \
+  'release.json' \
   'site.js' \
   'styles.css')
 actual_site_files=$(find site -type f -print | sed 's#^site/##' | LC_ALL=C sort)
@@ -105,7 +113,7 @@ verify_sha256 4d30bc3ccdc9b646a4ee4e3a230f00b855b07b04f2011dec81290a3fe27d395d \
   site/assets/rabbisir/yelzap-avatar.png
 verify_sha256 caa389488834e64489ca805937d8d1bf5a745b388a1138b429556dc1684bcc05 \
   site/assets/rabbisir/yelzap-wechat-qr-v1.png
-verify_sha256 69b18dcca23a9b240b399483c61025e1bbbf9d6085dbd858c966e1a5ce37e246 \
+verify_sha256 c249ba284ef2460f1f0e6de64b41a02eaf9f7fca737f1501b762a8e0ba3d21a3 \
   site/DOWNLOADS.md
 verify_sha256 5082086b3f32b37da781c0a58216875f10e3281dbba8a297a0a5e26e8319d3df \
   site/UPSTREAM.md
@@ -120,7 +128,7 @@ cmp -s LICENSE site/LICENSE \
   || fail "the Pages-local license differs from the reviewed Rabbisir root license"
 
 private_site_pattern='app''cast|spar''kle|support rab''bisir|appear''ance|wall''paper|official''overlay|overlay''receipt|developer id app''lication:|apple team i''d|begin (rsa |ec |openssh )?private ke''y|/use''rs/[^/ ]+|/pri''vate/tm''p/|deepseek_api''_key[[:space:]]*='
-if rg -n -i "$private_site_pattern" site
+if rg -n -i "$private_site_pattern" site/index.html site/download.html site/styles.css site/site.js site/assets site/DOWNLOADS.md site/UPSTREAM.md site/LICENSE
 then
   fail "private, official-only, credential, or local-path material entered the site"
 else

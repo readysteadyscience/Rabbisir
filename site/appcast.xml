@@ -1,0 +1,23 @@
+<?xml version="1.0" standalone="yes"?>
+<!-- sparkle-sign-warning:
+IMPORTANT: This file was signed by Sparkle. Any modifications to this file requires re-signing this file with generate_appcast or sign_update! The signed signature will be embedded at the end of this file.
+-->
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Rabbisir</title>
+        <item>
+            <title>0.1.0</title>
+            <pubDate>Thu, 20 Aug 2026 18:56:49 +0800</pubDate>
+            <sparkle:channel>production</sparkle:channel>
+            <sparkle:version>2</sparkle:version>
+            <sparkle:shortVersionString>0.1.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <enclosure url="https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.0-r1.01/Rabbisir-0.1.0-2.zip" length="148856673" type="application/octet-stream" sparkle:edSignature="Tp+sJz1IJA6QiY7hNo14McAT8l0gzyoYpMsbpW4jXleZpFEDVOUI3GKhId2uycK/S1d6FFeK3mp+NjCxFVnTAg=="/>
+        </item>
+    </channel>
+</rss>
+<!-- sparkle-signatures:
+edSignature: yBCsmFL+e8Oh7EEKxqWiKnN8zL17Quu+nk7ue8zkiz/mUwvp1m0IT0wm+iEzLWQGx74CT/SzJWx2U5AXV+QUCw==
+length: 1190
+-->
