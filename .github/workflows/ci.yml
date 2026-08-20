@@ -49,7 +49,7 @@ jobs:
         run: scripts/test-release-version-policy.sh
 
       - name: Lint Swift formatting
-        run: xcrun swift-format lint --strict --recursive Package.swift Sources Tests
+        run: scripts/lint-public-swift-format.sh
 
       # Generated runtime payloads are intentionally absent from Git. Full App build and native
       # tests run only after a receipted runtime has been staged with the documented local gate.
