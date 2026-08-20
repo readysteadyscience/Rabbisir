@@ -24,6 +24,11 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select --switch /Applications/Xcode.app
 
+      - name: Install public gate tooling
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: "1"
+        run: brew install ripgrep
+
       - name: Verify documentation links
         run: scripts/verify-documentation-links.sh
 
