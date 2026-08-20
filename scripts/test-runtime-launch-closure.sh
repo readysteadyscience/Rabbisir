@@ -2,11 +2,14 @@
 set -euo pipefail
 
 repository_root="${0:A:h:h}"
-source_root="$repository_root/Sources/RabbisirCore/Resources/VendorRuntime"
-contract="$repository_root/RuntimeProvenance/contract.json"
+inventory_tool="$repository_root/scripts/runtime-provenance.mjs"
+fixture_builder="$repository_root/scripts/create-runtime-provenance-fixture.sh"
 temporary_root="${TMPDIR:-/tmp}"
 temporary_root="${temporary_root%/}"
 work_root="$(/usr/bin/mktemp -d "$temporary_root/rabbisir-runtime-closure.XXXXXX")"
+source_root="$work_root/valid-runtime"
+contract="$work_root/fixture-contract.json"
+native_projection="node/node_modules/@deepseek-ai/fixture/lib/types/client/native-projection.js"
 
 cleanup() {
   [[ "$work_root" == "$temporary_root"/rabbisir-runtime-closure.* ]] || exit 70
@@ -14,13 +17,15 @@ cleanup() {
 }
 trap cleanup EXIT HUP INT TERM
 
+"$fixture_builder" "$source_root" "$contract" >/dev/null
+
 fresh_carrier() {
   /bin/rm -rf "$work_root/runtime"
   /bin/cp -cR "$source_root" "$work_root/runtime"
 }
 
 must_reject() {
-  if node "$repository_root/scripts/runtime-provenance.mjs" verify-runtime \
+  if node "$inventory_tool" verify-runtime \
     "$work_root/runtime" "$contract" >/dev/null 2>&1
   then
     print -u2 "test-runtime-launch-closure: accepted $1"
@@ -35,6 +40,14 @@ must_reject "a tampered launcher"
 fresh_carrier
 /bin/cp /usr/bin/true "$work_root/runtime/bin/node-spawn-helper"
 must_reject "a tampered Node spawn helper"
+
+fresh_carrier
+/bin/cp /usr/bin/true "$work_root/runtime/bin/node"
+must_reject "a tampered Node executable"
+
+fresh_carrier
+print 'tampered projection' >"$work_root/runtime/$native_projection"
+must_reject "a tampered native projection"
 
 fresh_carrier
 /bin/rm "$work_root/runtime/bin/rabbisir-runtime"

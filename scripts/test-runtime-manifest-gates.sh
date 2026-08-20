@@ -2,17 +2,22 @@
 set -euo pipefail
 
 repository_root="${0:A:h:h}"
-source_runtime="$repository_root/Sources/RabbisirCore/Resources/VendorRuntime"
-contract="$repository_root/RuntimeProvenance/contract.json"
+fixture_builder="$repository_root/scripts/create-runtime-provenance-fixture.sh"
 temporary_root="${TMPDIR:-/tmp}"
 temporary_root="${temporary_root%/}"
 work_root="$(/usr/bin/mktemp -d "$temporary_root/rabbisir-manifest-gates.XXXXXX")"
+source_runtime="$work_root/valid-runtime"
+contract="$work_root/fixture-contract.json"
 
 cleanup() {
   [[ "$work_root" == "$temporary_root"/rabbisir-manifest-gates.* ]] || exit 70
   /bin/rm -rf "$work_root"
 }
 trap cleanup EXIT HUP INT TERM
+
+"$fixture_builder" "$source_runtime" "$contract" >/dev/null
+"$repository_root/scripts/verify-staged-runtime.sh" \
+  "$source_runtime" "$contract" >/dev/null
 
 tamper_rabbisir_version() {
   node - "$1/manifest.json" <<'NODE'
@@ -49,6 +54,9 @@ node_distribution="$work_root/node-distribution"
 /bin/mkdir -p "$node_distribution/bin"
 /bin/cp "$source_runtime/bin/node" "$node_distribution/bin/node"
 /bin/cp "$source_runtime/LICENSE.node.txt" "$node_distribution/LICENSE"
+
+"$fixture_repository/scripts/stage-vendor-runtime.sh" \
+  "$source_runtime" "$node_distribution" >/dev/null
 
 if "$fixture_repository/scripts/stage-vendor-runtime.sh" \
   "$tampered_runtime" "$node_distribution" >/dev/null 2>&1
