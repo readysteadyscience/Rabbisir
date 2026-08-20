@@ -61,6 +61,7 @@ for required in \
   RuntimeProvenance/deterministic-css-modules.patch \
   site/.nojekyll \
   site/index.html \
+  site/download.html \
   site/site.js \
   site/styles.css \
   site/assets/rabbisir/discord-symbol-blurple.svg \

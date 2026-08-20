@@ -36,6 +36,7 @@ reject_pattern_i() {
 for required in \
   site/.nojekyll \
   site/index.html \
+  site/download.html \
   site/styles.css \
   site/site.js \
   site/assets/rabbisir/discord-symbol-blurple.svg \
@@ -70,6 +71,7 @@ expected_site_files=$(printf '%s\n' \
   'assets/rabbisir/yelzap-avatar.png' \
   'assets/rabbisir/yelzap-wechat-qr-v1.png' \
   'checksums.txt' \
+  'download.html' \
   'index.html' \
   'release.json' \
   'site.js' \
@@ -93,9 +95,11 @@ verify_sha256() {
     || fail "$file differs from the reviewed public-candidate digest"
 }
 
-verify_sha256 c024ce612271d548157d230e2fb087d0c01a95d5ec60658d98f1d538b1cd676b \
+verify_sha256 9d7d72a3c61091bf6a950c92e0737ddea9ed9aa75afd0126e07768bf2c5747bd \
   site/index.html
-verify_sha256 f3a44a62c2a1eb3ff97c321bf9e3cc54d3c50fb4252bebd8c04fbabfe8417095 \
+verify_sha256 33f3939b09726eb2ccd64d1c8273724a1149796a027aa6467eab136dc66115ea \
+  site/download.html
+verify_sha256 34af02f7ae04c6f14216bde55207ab67cb195717dd2d49594e555bb97320c6ee \
   site/styles.css
 verify_sha256 fe5fbcfe213e9a0d487b6f84fbf8beb6db0d6e10525d3625ddb869d19aca0ba6 \
   site/site.js
@@ -127,7 +131,7 @@ private_site_pattern='app''cast|spar''kle|support rab''bisir|appear''ance|wall''
 reject_pattern_i \
   "private, official-only, credential, or local-path material entered the site" \
   "$private_site_pattern" \
-  site/index.html site/styles.css site/site.js site/assets site/DOWNLOADS.md site/UPSTREAM.md site/LICENSE
+  site/index.html site/download.html site/styles.css site/site.js site/assets site/DOWNLOADS.md site/UPSTREAM.md site/LICENSE
 
 python3 - <<'PY'
 from html.parser import HTMLParser
@@ -137,8 +141,6 @@ import sys
 
 root = Path.cwd()
 site_root = (root / "site").resolve()
-html_path = site_root / "index.html"
-text = html_path.read_text(encoding="utf-8")
 
 
 class SiteParser(HTMLParser):
@@ -175,71 +177,98 @@ class SiteParser(HTMLParser):
             self.html_lang = values.get("lang")
 
 
-parser = SiteParser()
-parser.feed(text)
-
 failures = []
-if parser.html_lang != "en":
-    failures.append("the reviewed document language changed")
-if parser.h1_count != 1 or parser.main_count != 1:
-    failures.append("the reviewed site must contain exactly one h1 and one main landmark")
-if not {"top", "hero-title", "wechat-qr-dialog"}.issubset(parser.ids):
-    failures.append("the reviewed page landmarks changed")
-
 forbidden_tags = {"style", "form", "iframe", "source", "video", "audio", "object", "embed"}
-if forbidden_tags.intersection(parser.tags):
-    failures.append("the reviewed site gained inline, framed, or embedded content")
-
 expected_resources = {
     ("icon", "assets/rabbisir/rabbisir-mark-dark.png"),
     ("stylesheet", "styles.css"),
 }
-if set(parser.resources) != expected_resources:
-    failures.append("the reviewed local icon or stylesheet reference changed")
-if parser.scripts != [("site.js?v=20260815-wechat2", True)]:
-    failures.append("the reviewed deferred local script reference changed")
-if parser.images != [
+expected_script = [("site.js?v=20260815-wechat2", True)]
+dmg_url = "https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.0-r1.00/Rabbisir-0.1.0-1.dmg"
+zip_url = "https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.0-r1.00/Rabbisir-0.1.0-1.zip"
+release_url = "https://github.com/readysteadyscience/Rabbisir/releases/tag/v0.1.0-r1.00"
+
+index_images = [
     "assets/rabbisir/rabbisir-mark-dark.png",
     "assets/rabbisir/discord-symbol-blurple.svg",
     "assets/rabbisir/rabbisir-mark-dark.png",
     "assets/rabbisir/yelzap-avatar.png",
     "assets/rabbisir/x-logo-white-v1.svg",
     "assets/rabbisir/yelzap-wechat-qr-v1.png",
-]:
-    failures.append("the reviewed local image closure changed")
-
-expected_hrefs = {
+]
+index_hrefs = {
     "#top",
     "https://github.com/deepseek-ai/deepseek-harness",
+    dmg_url,
+    "download.html",
     "https://discord.gg/gT4TUHGkQm",
     "https://x.com/YelZap1987",
-    "DOWNLOADS.md",
     "UPSTREAM.md",
     "LICENSE",
 }
-if set(parser.hrefs) != expected_hrefs:
-    failures.append("the reviewed navigation destinations changed")
-
-local_references = [
-    href for href in parser.hrefs if not href.startswith(("#", "https://"))
+download_images = [
+    "assets/rabbisir/rabbisir-mark-dark.png",
+    "assets/rabbisir/yelzap-avatar.png",
+    "assets/rabbisir/x-logo-white-v1.svg",
+    "assets/rabbisir/yelzap-wechat-qr-v1.png",
 ]
-local_references.extend(href for _, href in parser.resources)
-local_references.extend(parser.images)
-local_references.extend(src for src, _ in parser.scripts)
-for reference in local_references:
-    parsed = urlsplit(reference)
-    allowed_query = reference == "site.js?v=20260815-wechat2"
-    if parsed.scheme or parsed.netloc or (parsed.query and not allowed_query):
-        failures.append(f"unreviewed resource reference: {reference}")
-        continue
-    target = (html_path.parent / parsed.path).resolve()
-    try:
-        target.relative_to(site_root)
-    except ValueError:
-        failures.append(f"resource escapes the Pages root: {reference}")
-        continue
-    if not target.is_file():
-        failures.append(f"missing local dependency: {reference}")
+download_hrefs = {
+    "index.html",
+    dmg_url,
+    zip_url,
+    release_url,
+    "https://github.com/deepseek-ai/deepseek-harness",
+    "https://x.com/YelZap1987",
+    "UPSTREAM.md",
+    "LICENSE",
+}
+
+
+def validate_page(filename, required_ids, expected_images, expected_hrefs):
+    html_path = site_root / filename
+    parser = SiteParser()
+    parser.feed(html_path.read_text(encoding="utf-8"))
+    if parser.html_lang != "en":
+        failures.append(f"{filename} document language changed")
+    if parser.h1_count != 1 or parser.main_count != 1:
+        failures.append(f"{filename} must contain exactly one h1 and one main landmark")
+    if not required_ids.issubset(parser.ids):
+        failures.append(f"{filename} landmarks changed")
+    if forbidden_tags.intersection(parser.tags):
+        failures.append(f"{filename} gained inline, framed, or embedded content")
+    if set(parser.resources) != expected_resources:
+        failures.append(f"{filename} local icon or stylesheet reference changed")
+    if parser.scripts != expected_script:
+        failures.append(f"{filename} deferred local script reference changed")
+    if parser.images != expected_images:
+        failures.append(f"{filename} local image closure changed")
+    if set(parser.hrefs) != expected_hrefs:
+        failures.append(f"{filename} navigation destinations changed")
+
+    local_references = [
+        href for href in parser.hrefs if not href.startswith(("#", "https://"))
+    ]
+    local_references.extend(href for _, href in parser.resources)
+    local_references.extend(parser.images)
+    local_references.extend(src for src, _ in parser.scripts)
+    for reference in local_references:
+        parsed = urlsplit(reference)
+        allowed_query = reference == "site.js?v=20260815-wechat2"
+        if parsed.scheme or parsed.netloc or (parsed.query and not allowed_query):
+            failures.append(f"unreviewed resource reference in {filename}: {reference}")
+            continue
+        target = (html_path.parent / parsed.path).resolve()
+        try:
+            target.relative_to(site_root)
+        except ValueError:
+            failures.append(f"resource escapes the Pages root in {filename}: {reference}")
+            continue
+        if not target.is_file():
+            failures.append(f"missing local dependency in {filename}: {reference}")
+
+
+validate_page("index.html", {"top", "hero-title", "wechat-qr-dialog"}, index_images, index_hrefs)
+validate_page("download.html", {"download-title", "wechat-qr-dialog"}, download_images, download_hrefs)
 
 if failures:
     print("\n".join(failures), file=sys.stderr)
@@ -254,8 +283,10 @@ reject_pattern \
   'fetch\(|XMLHttpRequest|WebSocket|EventSource|sendBeacon|document\.cookie|window\.open|location\.|eval\(|new Function' \
   site/site.js
 grep -q '<meta name="color-scheme" content="dark">' site/index.html \
+  && grep -q '<meta name="color-scheme" content="dark">' site/download.html \
   || fail "the final fixed-dark document metadata is missing"
 grep -q '<meta name="theme-color" content="#080a0d">' site/index.html \
+  && grep -q '<meta name="theme-color" content="#080a0d">' site/download.html \
   || fail "the final dark browser theme is missing"
 grep -q -- '--background: #080a0d;' site/styles.css \
   || fail "the final #080a0d background is missing"
@@ -275,15 +306,33 @@ grep -q '与 DeepSeek 不存在隶属、赞助或背书关系' site/index.html \
 grep -q '<span class="wechat-profile-label" data-en="WeChat" data-zh="微信">WeChat</span>' \
   site/index.html \
   || fail "the explicit bilingual WeChat contact entry is missing"
+official_dmg_url='https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.0-r1.00/Rabbisir-0.1.0-1.dmg'
+official_zip_url='https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.0-r1.00/Rabbisir-0.1.0-1.zip'
+grep -Fq "<a class=\"download-button\" href=\"$official_dmg_url\"" site/index.html \
+  || fail "the homepage primary download does not point directly to the official DMG"
+grep -Fq "<a class=\"download-button download-primary\" href=\"$official_dmg_url\"" site/download.html \
+  || fail "the download page primary action does not point directly to the official DMG"
+grep -Fq "<a class=\"download-archive\" href=\"$official_zip_url\"" site/download.html \
+  || fail "the signed update archive is not clearly separated on the download page"
+grep -q 'href="download.html" data-en="Release details" data-zh="下载信息"' site/index.html \
+  || fail "the browser-facing download information page is not linked from the homepage"
+if grep -q 'href="DOWNLOADS.md"' site/index.html site/download.html; then
+  fail "raw Markdown remains exposed as a browser-facing download destination"
+fi
+grep -q 'data-en="The DMG is the primary installer for Apple silicon Macs."' site/download.html \
+  && grep -q 'data-zh="DMG 是面向 Apple 芯片 Mac 的主要安装包。"' site/download.html \
+  || fail "the bilingual primary-installer explanation is missing"
 reject_pattern_i \
   "an excluded DeepSeek graphic or unverified WeChat graphic entered the site" \
   'deepseek[^<]*(logo|mark|avatar)|deepseek-(logo|mark|avatar)|wechat[^<]*(logo|mark)|wechat-(logo|mark)' \
-  site/index.html site/assets
+  site/index.html site/download.html site/assets
 
 grep -q '^# Public website$' docs/WEBSITE.md \
   || fail "the public website boundary is not documented"
 grep -q '^## Downloads$' docs/WEBSITE.md \
   || fail "the public download surface is not documented"
+grep -q 'browser-facing download page is.*site/download.html' docs/WEBSITE.md \
+  || fail "the browser-facing download page boundary is not documented"
 grep -q 'https://about.x.com/en/who-we-are/brand-toolkit' Legal/BRAND_ASSETS.md \
   || fail "the official X Brand Toolkit source is not recorded"
 grep -q 'caa389488834e64489ca805937d8d1bf5a745b388a1138b429556dc1684bcc05' \
@@ -462,10 +511,16 @@ if (!archive || !appcast.includes("production") || !appcast.includes(archive.url
     !hasExactSparkleMetadata("version", "1"))
   fail("Appcast semantics differ from the frozen production Release");
 const downloads = fs.readFileSync(path.join(root, "site/DOWNLOADS.md"), "utf8");
+const downloadPage = fs.readFileSync(path.join(root, "site/download.html"), "utf8");
 if (/No official Rabbisir installation asset is available|目前尚无可用的 Rabbisir 官方安装包/.test(downloads) ||
     !downloads.includes(release.releaseURL) || !release.assets.filter((asset) => /\.(dmg|zip)$/.test(asset.name))
       .every((asset) => downloads.includes(asset.url) && downloads.includes(asset.sha256) && downloads.includes(String(asset.size))))
   fail("download status does not describe the published Release assets");
+if (!downloadPage.includes(release.releaseURL) ||
+    !downloadPage.includes("macOS 14+ · Apple silicon (arm64)") ||
+    !release.assets.filter((asset) => /\.(dmg|zip)$/.test(asset.name))
+      .every((asset) => downloadPage.includes(asset.url) && downloadPage.includes(asset.sha256) && downloadPage.includes(String(asset.size))))
+  fail("the browser-facing download page does not describe the published Release assets");
 NODE
 
 echo "verify-pages-site: fixed public base and release Pages integration passed"

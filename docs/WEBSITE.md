@@ -34,10 +34,11 @@ scripts/verify-public-repository.sh
 
 ## Downloads
 
-The public download surface links to the official GitHub Release. Filenames, supported platform,
-sizes, SHA-256 values, and the canonical Release link are recorded in
-[`site/DOWNLOADS.md`](../site/DOWNLOADS.md). `Rabbisir Open` contributor builds are not official
-downloadable Apps.
+The browser-facing download page is [`site/download.html`](../site/download.html). It presents the
+DMG as the primary installer and identifies the ZIP as the signed update archive. Filenames,
+supported platform, sizes, SHA-256 values, and the canonical Release link are recorded in the page
+and in the auditable source record [`site/DOWNLOADS.md`](../site/DOWNLOADS.md). `Rabbisir Open`
+contributor builds are not official downloadable Apps.
 
 ## 中文边界
 
@@ -46,5 +47,7 @@ downloadable Apps.
 Rabbisir 标识、创作者头像和微信联系二维码均遵守上文列出的公开资产用途与许可边界。
 
 脚本只保存 `rabbisir-language` 语言选择，不包含分析、Cookie、凭据、更新、支付或自动外跳逻辑。
-官网的正式下载信息以 [`site/DOWNLOADS.md`](../site/DOWNLOADS.md) 中的 GitHub Release 链接、
-文件名、大小和 SHA-256 为准；本地 `Rabbisir Open` 构建不是官方安装包。
+官网面向浏览器的下载页为 [`site/download.html`](../site/download.html)：DMG 是主要安装包，ZIP
+明确标记为签名更新归档。GitHub Release 链接、文件名、大小和 SHA-256 同时记录在该页面与
+可审计的 [`site/DOWNLOADS.md`](../site/DOWNLOADS.md) 源记录中；本地 `Rabbisir Open` 构建不是
+官方安装包。
