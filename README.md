@@ -5,8 +5,14 @@ English | [中文](README.zh.md)
 <div align="center">
   <img src="Sources/RabbisirCore/Resources/Brand/RabbisirLogoTight.png" width="116" alt="Rabbisir logo">
   <p><strong>Built on DeepSeek Harness</strong></p>
-  <p><a href="https://github.com/readysteadyscience/Rabbisir/releases/latest"><strong>Download Rabbisir</strong></a></p>
-  <p><sub>macOS 14+ · development preview</sub></p>
+  <p>
+    <a href="https://readysteadyscience.github.io/Rabbisir/">Official website</a>
+    ·
+    <a href="https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.0-r1.00/Rabbisir-0.1.0-1.dmg"><strong>Download App (DMG)</strong></a>
+    ·
+    <a href="https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.0-r1.00/Rabbisir-0.1.0-1.zip">Signed update archive (ZIP)</a>
+  </p>
+  <p><sub>macOS 14+ · Apple silicon (arm64) · development preview</sub></p>
 </div>
 
 Rabbisir is an independent native macOS workspace built on [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).
