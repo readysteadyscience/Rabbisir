@@ -28,5 +28,9 @@ number is `1`. The official download links, filenames, sizes, and SHA-256 values
 [`../site/DOWNLOADS.md`](../site/DOWNLOADS.md). Public version transitions follow
 [`VERSIONING.md`](VERSIONING.md).
 
+The `0.1.0 · r1.01` maintenance release uses Apple build `2`. Its public Release title and body are
+exactly `BUG 修复`. The corresponding source and Pages files are only a publication candidate until
+the exact GitHub Release assets and production update feed have been created and read back.
+
 Contributor builds are unsigned local `Rabbisir Open` builds and are not official distributions.
 Do not publish generated App packages or claim that local validation produced the official App.

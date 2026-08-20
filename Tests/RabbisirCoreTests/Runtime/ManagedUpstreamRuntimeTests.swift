@@ -293,6 +293,117 @@ struct ManagedUpstreamRuntimeTests {
     }
   }
 
+  @Test(
+    "A signed official package uses the system code signature after signing changes Mach-O bytes"
+  )
+  func signedOfficialPackageUsesSystemIntegrity() throws {
+    let root = try temporaryDirectory()
+    defer { try? FileManager.default.removeItem(at: root) }
+    let application = root.appendingPathComponent("Rabbisir.app", isDirectory: true)
+    let runtime = application.appendingPathComponent(
+      "Contents/Resources/Rabbisir_RabbisirCore.bundle/VendorRuntime",
+      isDirectory: true
+    )
+    try writeReceiptedRuntime(to: runtime)
+    try writeProductFlavor("official-production", to: application)
+    let plan = try UpstreamRuntimeResolver(resourceRoot: runtime, environment: [:]).resolve()
+    let signedNode = runtime.appendingPathComponent("bin/node")
+    try Data("developer-id-signed-node\n".utf8).write(to: signedNode)
+    try FileManager.default.setAttributes(
+      [.posixPermissions: 0o755],
+      ofItemAtPath: signedNode.path
+    )
+    let marker = root.appendingPathComponent("signature-checked")
+
+    try RuntimeProvenanceCheck.live(
+      codeSignatureCheck: RuntimeCodeSignatureCheck { checkedApplication in
+        guard checkedApplication == application else {
+          throw RuntimeProvenanceVerificationError.codeSignatureInvalid
+        }
+        try Data().write(to: marker)
+      }
+    ).perform(runtime, plan.manifest)
+
+    #expect(FileManager.default.fileExists(atPath: marker.path))
+  }
+
+  @Test("A failed official App signature remains fail-closed")
+  func invalidOfficialSignatureIsRejected() throws {
+    enum ProbeError: Error { case invalidSignature }
+    let root = try temporaryDirectory()
+    defer { try? FileManager.default.removeItem(at: root) }
+    let application = root.appendingPathComponent("Rabbisir.app", isDirectory: true)
+    let runtime = application.appendingPathComponent(
+      "Contents/Resources/Rabbisir_RabbisirCore.bundle/VendorRuntime",
+      isDirectory: true
+    )
+    try writeReceiptedRuntime(to: runtime)
+    try writeProductFlavor("official-production", to: application)
+    let plan = try UpstreamRuntimeResolver(resourceRoot: runtime, environment: [:]).resolve()
+    let signedNode = runtime.appendingPathComponent("bin/node")
+    try Data("developer-id-signed-node\n".utf8).write(to: signedNode)
+    try FileManager.default.setAttributes(
+      [.posixPermissions: 0o755],
+      ofItemAtPath: signedNode.path
+    )
+
+    #expect(throws: RuntimeProvenanceVerificationError.codeSignatureInvalid) {
+      try RuntimeProvenanceCheck.live(
+        codeSignatureCheck: RuntimeCodeSignatureCheck { _ in
+          throw ProbeError.invalidSignature
+        }
+      ).perform(runtime, plan.manifest)
+    }
+  }
+
+  @Test("Signing fallback never applies to DEV or source runtime carriers")
+  func developmentCarrierStillRequiresSourceBytes() throws {
+    let root = try temporaryDirectory()
+    defer { try? FileManager.default.removeItem(at: root) }
+    let application = root.appendingPathComponent("Rabbisir DEV.app", isDirectory: true)
+    let runtime = application.appendingPathComponent(
+      "Contents/Resources/Rabbisir_RabbisirCore.bundle/VendorRuntime",
+      isDirectory: true
+    )
+    try writeReceiptedRuntime(to: runtime)
+    try writeProductFlavor("official-development", to: application)
+    let plan = try UpstreamRuntimeResolver(resourceRoot: runtime, environment: [:]).resolve()
+    try Data("changed DEV node\n".utf8).write(to: runtime.appendingPathComponent("bin/node"))
+    let marker = root.appendingPathComponent("signature-checked")
+
+    #expect(throws: RuntimeProvenanceVerificationError.self) {
+      try RuntimeProvenanceCheck.live(
+        codeSignatureCheck: RuntimeCodeSignatureCheck { _ in
+          try Data().write(to: marker)
+        }
+      ).perform(runtime, plan.manifest)
+    }
+    #expect(!FileManager.default.fileExists(atPath: marker.path))
+  }
+
+  @Test("A valid App signature cannot hide changed source metadata")
+  func signedPackageStillRejectsMetadataTampering() throws {
+    let root = try temporaryDirectory()
+    defer { try? FileManager.default.removeItem(at: root) }
+    let application = root.appendingPathComponent("Rabbisir.app", isDirectory: true)
+    let runtime = application.appendingPathComponent(
+      "Contents/Resources/Rabbisir_RabbisirCore.bundle/VendorRuntime",
+      isDirectory: true
+    )
+    try writeReceiptedRuntime(to: runtime)
+    try writeProductFlavor("official-production", to: application)
+    let plan = try UpstreamRuntimeResolver(resourceRoot: runtime, environment: [:]).resolve()
+    try Data("changed projection\n".utf8).write(
+      to: runtime.appendingPathComponent("node/lib/native-projection.js")
+    )
+
+    #expect(throws: RuntimeProvenanceVerificationError.projectionMismatch) {
+      try RuntimeProvenanceCheck.live(
+        codeSignatureCheck: RuntimeCodeSignatureCheck { _ in }
+      ).perform(runtime, plan.manifest)
+    }
+  }
+
   @Test("Manifest executable traversal is rejected before a launch plan is produced")
   func manifestExecutableTraversalIsRejected() throws {
     let root = try temporaryDirectory()
@@ -506,6 +617,20 @@ struct ManagedUpstreamRuntimeTests {
   private func writeManifest(to root: URL) throws {
     let data = try JSONEncoder().encode(manifest)
     try data.write(to: root.appendingPathComponent("manifest.json"))
+  }
+
+  private func writeProductFlavor(_ flavor: String, to application: URL) throws {
+    let contents = application.appendingPathComponent("Contents", isDirectory: true)
+    try FileManager.default.createDirectory(at: contents, withIntermediateDirectories: true)
+    let data = try PropertyListSerialization.data(
+      fromPropertyList: [
+        "CFBundlePackageType": "APPL",
+        "RabbisirProductFlavor": flavor,
+      ],
+      format: .xml,
+      options: 0
+    )
+    try data.write(to: contents.appendingPathComponent("Info.plist"))
   }
 
   private func writeReceiptedRuntime(to root: URL) throws {

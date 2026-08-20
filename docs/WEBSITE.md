@@ -40,6 +40,11 @@ supported platform, sizes, SHA-256 values, and the canonical Release link are re
 and in the auditable source record [`site/DOWNLOADS.md`](../site/DOWNLOADS.md). `Rabbisir Open`
 contributor builds are not official downloadable Apps.
 
+The primary actions use GitHub's stable `releases/latest/download/` route rather than a hard-coded
+release tag. A source commit does not prove those assets are public and does not deploy Pages. The
+release transaction must create and read back the exact DMG and ZIP before deploying this candidate;
+generated Release metadata and the signed production update feed are added only in that transaction.
+
 ## 中文边界
 
 公开 GitHub Pages 打包根及页面入口均位于 [`site/`](../site)。网站保留黑底响应式布局、双语切换、
@@ -51,3 +56,7 @@ Rabbisir 标识、创作者头像和微信联系二维码均遵守上文列出�
 明确标记为签名更新归档。GitHub Release 链接、文件名、大小和 SHA-256 同时记录在该页面与
 可审计的 [`site/DOWNLOADS.md`](../site/DOWNLOADS.md) 源记录中；本地 `Rabbisir Open` 构建不是
 官方安装包。
+
+主下载操作使用 GitHub 稳定的 `releases/latest/download/` 路径，不写死旧 Release 标签。源码
+提交不代表资产已经公开，也不会部署 Pages；只有发布事务创建并回读准确的 DMG、ZIP 后，才可
+部署该候选，并在同一事务中加入生成的 Release 元数据与已签名生产更新源。

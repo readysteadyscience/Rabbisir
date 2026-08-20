@@ -45,10 +45,6 @@ for required in \
   site/assets/rabbisir/yelzap-avatar.png \
   site/assets/rabbisir/yelzap-wechat-qr-v1.png \
   site/DOWNLOADS.md \
-  site/PagesSourceManifest.json \
-  site/appcast.xml \
-  site/checksums.txt \
-  site/release.json \
   site/UPSTREAM.md \
   site/LICENSE \
   .github/workflows/pages.yml \
@@ -62,18 +58,14 @@ expected_site_files=$(printf '%s\n' \
   '.nojekyll' \
   'DOWNLOADS.md' \
   'LICENSE' \
-  'PagesSourceManifest.json' \
   'UPSTREAM.md' \
-  'appcast.xml' \
   'assets/rabbisir/discord-symbol-blurple.svg' \
   'assets/rabbisir/rabbisir-mark-dark.png' \
   'assets/rabbisir/x-logo-white-v1.svg' \
   'assets/rabbisir/yelzap-avatar.png' \
   'assets/rabbisir/yelzap-wechat-qr-v1.png' \
-  'checksums.txt' \
   'download.html' \
   'index.html' \
-  'release.json' \
   'site.js' \
   'styles.css')
 actual_site_files=$(find site -type f -print | sed 's#^site/##' | LC_ALL=C sort)
@@ -95,9 +87,9 @@ verify_sha256() {
     || fail "$file differs from the reviewed public-candidate digest"
 }
 
-verify_sha256 9d7d72a3c61091bf6a950c92e0737ddea9ed9aa75afd0126e07768bf2c5747bd \
+verify_sha256 17128fa8be81aa53bc294c29cd7557aac1630d9cc1b18add225b13768e4e32a6 \
   site/index.html
-verify_sha256 33f3939b09726eb2ccd64d1c8273724a1149796a027aa6467eab136dc66115ea \
+verify_sha256 e7d08a0cd79ce9b1a2fecbc04a2f82de2352cf1be93d2900ee83aa3527db5423 \
   site/download.html
 verify_sha256 34af02f7ae04c6f14216bde55207ab67cb195717dd2d49594e555bb97320c6ee \
   site/styles.css
@@ -113,7 +105,7 @@ verify_sha256 4d30bc3ccdc9b646a4ee4e3a230f00b855b07b04f2011dec81290a3fe27d395d \
   site/assets/rabbisir/yelzap-avatar.png
 verify_sha256 caa389488834e64489ca805937d8d1bf5a745b388a1138b429556dc1684bcc05 \
   site/assets/rabbisir/yelzap-wechat-qr-v1.png
-verify_sha256 74ff1f6f3798cdbfb319cf88a81b587e961131f0ecb230f4022db8a4497eebdf \
+verify_sha256 69b18dcca23a9b240b399483c61025e1bbbf9d6085dbd858c966e1a5ce37e246 \
   site/DOWNLOADS.md
 verify_sha256 5082086b3f32b37da781c0a58216875f10e3281dbba8a297a0a5e26e8319d3df \
   site/UPSTREAM.md
@@ -128,10 +120,13 @@ cmp -s LICENSE site/LICENSE \
   || fail "the Pages-local license differs from the reviewed Rabbisir root license"
 
 private_site_pattern='app''cast|spar''kle|support rab''bisir|appear''ance|wall''paper|official''overlay|overlay''receipt|developer id app''lication:|apple team i''d|begin (rsa |ec |openssh )?private ke''y|/use''rs/[^/ ]+|/pri''vate/tm''p/|deepseek_api''_key[[:space:]]*='
-reject_pattern_i \
-  "private, official-only, credential, or local-path material entered the site" \
-  "$private_site_pattern" \
-  site/index.html site/download.html site/styles.css site/site.js site/assets site/DOWNLOADS.md site/UPSTREAM.md site/LICENSE
+if rg -n -i "$private_site_pattern" site
+then
+  fail "private, official-only, credential, or local-path material entered the site"
+else
+  scan_result=$?
+  [ "$scan_result" -eq 1 ] || fail "the private-site boundary scan failed"
+fi
 
 python3 - <<'PY'
 from html.parser import HTMLParser
@@ -184,9 +179,9 @@ expected_resources = {
     ("stylesheet", "styles.css"),
 }
 expected_script = [("site.js?v=20260815-wechat2", True)]
-dmg_url = "https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.0-r1.00/Rabbisir-0.1.0-1.dmg"
-zip_url = "https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.0-r1.00/Rabbisir-0.1.0-1.zip"
-release_url = "https://github.com/readysteadyscience/Rabbisir/releases/tag/v0.1.0-r1.00"
+dmg_url = "https://github.com/readysteadyscience/Rabbisir/releases/latest/download/Rabbisir-0.1.0-2.dmg"
+zip_url = "https://github.com/readysteadyscience/Rabbisir/releases/latest/download/Rabbisir-0.1.0-2.zip"
+release_url = "https://github.com/readysteadyscience/Rabbisir/releases/latest"
 
 index_images = [
     "assets/rabbisir/rabbisir-mark-dark.png",
@@ -306,8 +301,8 @@ grep -q '与 DeepSeek 不存在隶属、赞助或背书关系' site/index.html \
 grep -q '<span class="wechat-profile-label" data-en="WeChat" data-zh="微信">WeChat</span>' \
   site/index.html \
   || fail "the explicit bilingual WeChat contact entry is missing"
-official_dmg_url='https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.0-r1.00/Rabbisir-0.1.0-1.dmg'
-official_zip_url='https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.0-r1.00/Rabbisir-0.1.0-1.zip'
+official_dmg_url='https://github.com/readysteadyscience/Rabbisir/releases/latest/download/Rabbisir-0.1.0-2.dmg'
+official_zip_url='https://github.com/readysteadyscience/Rabbisir/releases/latest/download/Rabbisir-0.1.0-2.zip'
 grep -Fq "<a class=\"download-button\" href=\"$official_dmg_url\"" site/index.html \
   || fail "the homepage primary download does not point directly to the official DMG"
 grep -Fq "<a class=\"download-button download-primary\" href=\"$official_dmg_url\"" site/download.html \
@@ -322,6 +317,16 @@ fi
 grep -q 'data-en="The DMG is the primary installer for Apple silicon Macs."' site/download.html \
   && grep -q 'data-zh="DMG 是面向 Apple 芯片 Mac 的主要安装包。"' site/download.html \
   || fail "the bilingual primary-installer explanation is missing"
+for expected_release_fact in \
+  'Rabbisir 0.1.0 · r1.01' \
+  'DMG · 108190487 bytes' \
+  'b9817858cbe5cb8d1b2ab258478364324bee7849a239fb03919ffaa12cab6754' \
+  'ZIP · 148856673 bytes' \
+  'e754098255d40a06522351c09512503e0900f994b13181da60fe9d585ef33627'
+do
+  grep -Fq "$expected_release_fact" site/download.html site/DOWNLOADS.md \
+    || fail "the maintenance-release download facts are incomplete"
+done
 reject_pattern_i \
   "an excluded DeepSeek graphic or unverified WeChat graphic entered the site" \
   'deepseek[^<]*(logo|mark|avatar)|deepseek-(logo|mark|avatar)|wechat[^<]*(logo|mark)|wechat-(logo|mark)' \
@@ -378,149 +383,4 @@ grep -q '^      id-token: write$' "$pages_workflow" \
   || fail "Pages deploy job lacks the required OIDC permission"
 grep -q 'run: scripts/verify-pages-site.sh' .github/workflows/ci.yml \
   || fail "CI does not verify the Pages capsule"
-
-/usr/bin/env node <<'NODE'
-const crypto = require("node:crypto");
-const fs = require("node:fs");
-const path = require("node:path");
-const root = process.cwd();
-const sha = (file) => crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex");
-const digest = (value) => crypto.createHash("sha256").update(value).digest("hex");
-const exact = (value, keys) => value && typeof value === "object" && !Array.isArray(value) &&
-  JSON.stringify(Object.keys(value).sort()) === JSON.stringify([...keys].sort());
-const fail = (message) => { console.error("verify-pages-site: " + message); process.exit(1); };
-const inside = (rootPath, candidate) => {
-  const relative = path.relative(rootPath, candidate);
-  return relative === "" || (relative !== ".." && !relative.startsWith(".." + path.sep) && !path.isAbsolute(relative));
-};
-const completeRuntimeTree = (runtimeRoot) => {
-  const resolvedRoot = fs.realpathSync(runtimeRoot);
-  const records = [];
-  let directoryCount = 0, fileCount = 0, symlinkCount = 0;
-  const safe = (value) => {
-    if (value.includes("\n") || value.includes("\r") || value.includes("\0"))
-      throw new Error("unsupported runtime inventory text");
-  };
-  const visit = (directory) => {
-    const entries = fs.readdirSync(directory, { withFileTypes: true })
-      .sort((left, right) => Buffer.from(left.name).compare(Buffer.from(right.name)));
-    for (const entry of entries) {
-      const absolute = path.join(directory, entry.name);
-      const relative = path.relative(resolvedRoot, absolute).split(path.sep).join("/");
-      safe(relative);
-      const stat = fs.lstatSync(absolute);
-      if (stat.isDirectory()) {
-        records.push("directory " + relative + "\n");
-        directoryCount += 1;
-        visit(absolute);
-      } else if (stat.isSymbolicLink()) {
-        const target = fs.readlinkSync(absolute);
-        safe(target);
-        if (!inside(resolvedRoot, fs.realpathSync(absolute))) throw new Error("runtime symlink escape");
-        records.push("link " + target + " " + relative + "\n");
-        symlinkCount += 1;
-      } else if (stat.isFile()) {
-        const mode = stat.mode & 0o111 ? "0755" : "0644";
-        records.push("file " + mode + " " + sha(absolute) + " " + relative + "\n");
-        fileCount += 1;
-      } else throw new Error("unsupported runtime entry");
-    }
-  };
-  visit(resolvedRoot);
-  records.sort();
-  return { algorithm: "sha256(complete-path-kind-mode-content-v1)", digest: digest(records.join("")),
-    directoryCount, fileCount, symlinkCount };
-};
-const manifestPath = path.join(root, "site/PagesSourceManifest.json");
-const runtimeReceiptPath = path.join(root, "Sources/RabbisirCore/Resources/VendorRuntime/.rabbisir-runtime-provenance.json");
-const isPublicSourceExport = process.env.RABBISIR_PUBLIC_SOURCE_EXPORT === "true";
-const runtimeReceiptIsPresent = fs.existsSync(runtimeReceiptPath);
-let manifest, release;
-try {
-  manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
-  release = JSON.parse(fs.readFileSync(path.join(root, "site/release.json"), "utf8"));
-} catch { fail("generated Pages metadata is unreadable"); }
-if (!exact(manifest.runtime, ["contractSHA256", "receiptSHA256", "tree"]) ||
-    !exact(manifest.runtime.tree, ["algorithm", "digest", "directoryCount", "fileCount", "symlinkCount"]) ||
-    manifest.runtime.tree.algorithm !== "sha256(complete-path-kind-mode-content-v1)" ||
-    !/^[0-9a-f]{64}$/.test(manifest.runtime.tree.digest || "") ||
-    !Number.isSafeInteger(manifest.runtime.tree.directoryCount) || manifest.runtime.tree.directoryCount < 1 ||
-    !Number.isSafeInteger(manifest.runtime.tree.fileCount) || manifest.runtime.tree.fileCount < 1 ||
-    !Number.isSafeInteger(manifest.runtime.tree.symlinkCount) || manifest.runtime.tree.symlinkCount < 0)
-  fail("runtime tree provenance is invalid");
-let actualRuntimeTree = null;
-if (runtimeReceiptIsPresent) {
-  try { actualRuntimeTree = completeRuntimeTree(path.dirname(runtimeReceiptPath)); }
-  catch { fail("runtime tree cannot be verified"); }
-}
-if (isPublicSourceExport === runtimeReceiptIsPresent ||
-    !exact(manifest, ["files", "publicAppcastURL", "publicBase", "releaseTag", "runtime", "schemaVersion", "verification", "workflow"]) ||
-    manifest.schemaVersion !== 2 || manifest.publicBase.commit !== "d8e7d659888a5894e4e41b1817da5b60d6dc44f9" ||
-    manifest.publicBase.tree !== "33368c038608f1518f263bf4aa539ecde939b3d8" || manifest.releaseTag !== "v0.1.0-r1.00" ||
-    manifest.publicAppcastURL !== "https://readysteadyscience.github.io/Rabbisir/appcast.xml" || manifest.workflow.path !== ".github/workflows/pages.yml" ||
-    manifest.workflow.ref !== "refs/heads/main" || manifest.workflow.sha256 !== sha(path.join(root, manifest.workflow.path)) ||
-    manifest.runtime.contractSHA256 !== sha(path.join(root, "Sources/RabbisirCore/Resources/VendorRuntime/provenance-contract.json")) ||
-    !/^[0-9a-f]{64}$/.test(manifest.runtime.receiptSHA256) ||
-    (runtimeReceiptIsPresent && manifest.runtime.receiptSHA256 !== sha(runtimeReceiptPath)) ||
-    (actualRuntimeTree && JSON.stringify(actualRuntimeTree) !== JSON.stringify(manifest.runtime.tree)) ||
-    manifest.verification.governanceSHA256 !== sha(path.join(root, "scripts/verify-code-review-governance.sh")) ||
-    manifest.verification.pagesSHA256 !== sha(path.join(root, "scripts/verify-pages-site.sh")) ||
-    manifest.verification.publicRepositorySHA256 !== sha(path.join(root, "scripts/verify-public-repository.sh")) ||
-    manifest.verification.downloadsSHA256 !== sha(path.join(root, "site/DOWNLOADS.md"))) {
-  fail("Pages integration provenance differs from the reviewed candidate");
-}
-const expectedFiles = ["appcast.xml", "checksums.txt", "release.json"];
-if (!Array.isArray(manifest.files) || manifest.files.map((entry) => entry.name).join(",") !== expectedFiles.join(","))
-  fail("generated Pages file inventory differs from the reviewed closure");
-for (const entry of manifest.files) {
-  const file = path.join(root, "site", entry.name);
-  if (sha(file) !== entry.sha256 || fs.statSync(file).size !== entry.size)
-    fail("a generated Pages file differs from its manifest");
-}
-if (!exact(release, ["assets", "build", "releaseURL", "schemaVersion", "tag", "version"]) ||
-    release.schemaVersion !== 1 || release.version !== "0.1.0" || release.build !== "1" ||
-    release.tag !== "v0.1.0-r1.00" || release.releaseURL !== "https://github.com/readysteadyscience/Rabbisir/releases/tag/v0.1.0-r1.00" ||
-    !Array.isArray(release.assets) || release.assets.length !== 4) fail("release metadata differs from the frozen plan");
-const checksumLines = fs.readFileSync(path.join(root, "site/checksums.txt"), "utf8").trim().split("\n").sort();
-const expectedChecksums = release.assets.map((asset) => asset.sha256 + "  " + asset.name).sort();
-if (JSON.stringify(checksumLines) !== JSON.stringify(expectedChecksums)) fail("checksums and release assets differ");
-const appcast = fs.readFileSync(path.join(root, "site/appcast.xml"), "utf8");
-const archive = release.assets.find((asset) => asset.name.endsWith(".zip"));
-const appcastWithoutComments = appcast.replace(/<!--[\s\S]*?-->/g, "");
-const sparkleMetadataValues = (name) => {
-  const values = [];
-  const elementPattern = new RegExp(
-    "<sparkle:" + name + "(?:\\s[^>]*)?>([^<]*)</sparkle:" + name + ">",
-    "g"
-  );
-  const enclosureAttributePattern = new RegExp(
-    "<enclosure\\b[^>]*\\ssparkle:" + name + "=(?:\\\"([^\\\"]*)\\\"|'([^']*)')[^>]*>",
-    "g"
-  );
-  for (const match of appcastWithoutComments.matchAll(elementPattern)) values.push(match[1].trim());
-  for (const match of appcastWithoutComments.matchAll(enclosureAttributePattern))
-    values.push(match[1] ?? match[2]);
-  return values;
-};
-const hasExactSparkleMetadata = (name, expected) => {
-  const values = sparkleMetadataValues(name);
-  return values.length > 0 && values.every((value) => value === expected);
-};
-if (!archive || !appcast.includes("production") || !appcast.includes(archive.url) ||
-    !hasExactSparkleMetadata("shortVersionString", "0.1.0") ||
-    !hasExactSparkleMetadata("version", "1"))
-  fail("Appcast semantics differ from the frozen production Release");
-const downloads = fs.readFileSync(path.join(root, "site/DOWNLOADS.md"), "utf8");
-const downloadPage = fs.readFileSync(path.join(root, "site/download.html"), "utf8");
-if (/No official Rabbisir installation asset is available|目前尚无可用的 Rabbisir 官方安装包/.test(downloads) ||
-    !downloads.includes(release.releaseURL) || !release.assets.filter((asset) => /\.(dmg|zip)$/.test(asset.name))
-      .every((asset) => downloads.includes(asset.url) && downloads.includes(asset.sha256) && downloads.includes(String(asset.size))))
-  fail("download status does not describe the published Release assets");
-if (!downloadPage.includes(release.releaseURL) ||
-    !downloadPage.includes("macOS 14+ · Apple silicon (arm64)") ||
-    !release.assets.filter((asset) => /\.(dmg|zip)$/.test(asset.name))
-      .every((asset) => downloadPage.includes(asset.url) && downloadPage.includes(asset.sha256) && downloadPage.includes(String(asset.size))))
-  fail("the browser-facing download page does not describe the published Release assets");
-NODE
-
-echo "verify-pages-site: fixed public base and release Pages integration passed"
+echo "verify-pages-site: maintenance-release public base and manual Pages packaging passed"

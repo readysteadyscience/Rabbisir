@@ -1,5 +1,6 @@
 import CryptoKit
 import Foundation
+import Security
 
 struct RuntimePayloadInventory: Codable, Equatable, Sendable {
   static let supportedAlgorithm = "sha256(canonical-path-mode-content-v1)"
@@ -144,6 +145,53 @@ enum RuntimeProvenanceVerificationError: Error, Equatable {
   case inventoryMismatch
   case nodeMismatch
   case projectionMismatch
+  case codeSignatureInvalid
+}
+
+struct RuntimeCodeSignatureCheck: Sendable {
+  let perform: @Sendable (URL) throws -> Void
+
+  static let live = Self { applicationURL in
+    var staticCode: SecStaticCode?
+    guard
+      SecStaticCodeCreateWithPath(
+        applicationURL as CFURL,
+        SecCSFlags(),
+        &staticCode
+      ) == errSecSuccess,
+      let staticCode
+    else { throw RuntimeProvenanceVerificationError.codeSignatureInvalid }
+    let flags = SecCSFlags(
+      rawValue: UInt32(
+        kSecCSCheckAllArchitectures | kSecCSCheckNestedCode | kSecCSStrictValidate
+      )
+    )
+    guard SecStaticCodeCheckValidity(staticCode, flags, nil) == errSecSuccess else {
+      throw RuntimeProvenanceVerificationError.codeSignatureInvalid
+    }
+  }
+}
+
+enum RuntimePackagedApplication {
+  static func officialProductionApp(containing resourceRoot: URL) -> URL? {
+    let resourceBundle = resourceRoot.deletingLastPathComponent()
+    let resources = resourceBundle.deletingLastPathComponent()
+    let contents = resources.deletingLastPathComponent()
+    let application = contents.deletingLastPathComponent()
+    guard resourceBundle.pathExtension == "bundle",
+      resources.lastPathComponent == "Resources",
+      contents.lastPathComponent == "Contents",
+      application.pathExtension == "app",
+      let data = try? Data(contentsOf: contents.appendingPathComponent("Info.plist")),
+      let info = try? PropertyListSerialization.propertyList(
+        from: data,
+        options: [],
+        format: nil
+      ) as? [String: Any],
+      info["RabbisirProductFlavor"] as? String == "official-production"
+    else { return nil }
+    return application
+  }
 }
 
 enum RuntimeCanonicalPath {
@@ -178,70 +226,28 @@ enum RuntimeCanonicalPath {
 }
 
 enum RuntimeProvenanceVerifier {
+  private struct VerifiedMetadata {
+    let contract: RuntimeProvenanceContract
+    let receipt: RuntimeProvenanceReceipt
+    let expectedInventory: RuntimePayloadInventory
+    let node: URL
+  }
+
   static func verify(resourceRoot: URL, manifest: UpstreamRuntimeManifest) throws {
     do {
-      let contractData = try Data(
-        contentsOf: resourceRoot.appendingPathComponent("provenance-contract.json"))
-      let contract = try JSONDecoder().decode(RuntimeProvenanceContract.self, from: contractData)
-      let storedManifestData = try Data(
-        contentsOf: resourceRoot.appendingPathComponent("manifest.json"))
-      let storedManifest = try UpstreamRuntimeManifest.decodeStrictly(from: storedManifestData)
-      let receiptData = try Data(
-        contentsOf: resourceRoot.appendingPathComponent(
-          ".rabbisir-runtime-provenance.json"))
-      let receipt = try JSONDecoder().decode(RuntimeProvenanceReceipt.self, from: receiptData)
+      let metadata = try verifiedMetadata(resourceRoot: resourceRoot, manifest: manifest)
       let inventory = try RuntimePayloadInventory.readRuntimeCarrier(from: resourceRoot)
-      let expectedInventory = RuntimePayloadInventory(
-        algorithm: contract.output.algorithm,
-        digest: contract.output.digest,
-        fileCount: contract.output.fileCount,
-        symlinkCount: contract.output.symlinkCount
-      )
-      let contractDigest = sha256(contractData)
-      guard contract.schemaVersion == 3,
-        storedManifest == manifest,
-        manifest.schemaVersion == contract.manifest.schemaVersion,
-        manifest.upstreamVersion == contract.upstream.version,
-        manifest.rabbisirVersion == contract.manifest.rabbisirVersion,
-        manifest.upstreamCommit == contract.upstream.commit,
-        manifest.upstreamTree == contract.upstream.tree,
-        manifest.provenanceContractSHA256 == contractDigest,
-        manifest.runtimeInventorySHA256 == contract.output.digest,
-        manifest.executable == contract.launch.executable
-      else { throw RuntimeProvenanceVerificationError.contractMismatch }
-      guard receipt.schemaVersion == 3,
-        receipt.contractSHA256 == contractDigest,
-        receipt.upstreamCommit == contract.upstream.commit
-      else { throw RuntimeProvenanceVerificationError.receiptMismatch }
-      guard receipt.inventory == inventory else {
+      guard metadata.receipt.inventory == inventory else {
         throw RuntimeProvenanceVerificationError.receiptInventoryMismatch
       }
       guard
-        inventory == expectedInventory,
+        inventory == metadata.expectedInventory,
         inventory.algorithm == RuntimePayloadInventory.supportedAlgorithm
       else { throw RuntimeProvenanceVerificationError.inventoryMismatch }
-      let launcher = try RuntimeCanonicalPath.resolve(
-        contract.launch.executable, under: resourceRoot)
-      let node = try RuntimeCanonicalPath.resolve(contract.launch.node, under: resourceRoot)
-      let spawnHelper = try RuntimeCanonicalPath.resolve(
-        contract.launch.nodeSpawnHelper,
-        under: resourceRoot
-      )
-      guard FileManager.default.isExecutableFile(atPath: launcher.path),
-        FileManager.default.isExecutableFile(atPath: node.path),
-        FileManager.default.isExecutableFile(atPath: spawnHelper.path)
-      else { throw RuntimeProvenanceVerificationError.invalidPayload }
       guard
-        try sha256(file: node)
-          == contract.toolchain.nodeBinarySHA256
+        try sha256(file: metadata.node)
+          == metadata.contract.toolchain.nodeBinarySHA256
       else { throw RuntimeProvenanceVerificationError.nodeMismatch }
-      guard
-        try sha256(
-          file: try RuntimeCanonicalPath.resolve(
-            contract.output.nativeProjection.path,
-            under: resourceRoot
-          )) == contract.output.nativeProjection.sha256
-      else { throw RuntimeProvenanceVerificationError.projectionMismatch }
     } catch let error as RuntimeProvenanceVerificationError {
       throw error
     } catch is CancellationError {
@@ -249,6 +255,93 @@ enum RuntimeProvenanceVerifier {
     } catch {
       throw RuntimeProvenanceVerificationError.invalidPayload
     }
+  }
+
+  static func verifySignedPackage(
+    resourceRoot: URL,
+    manifest: UpstreamRuntimeManifest,
+    applicationURL: URL,
+    codeSignatureCheck: RuntimeCodeSignatureCheck = .live
+  ) throws {
+    do {
+      _ = try verifiedMetadata(resourceRoot: resourceRoot, manifest: manifest)
+    } catch let error as RuntimeProvenanceVerificationError {
+      throw error
+    } catch is CancellationError {
+      throw CancellationError()
+    } catch {
+      throw RuntimeProvenanceVerificationError.invalidPayload
+    }
+    do {
+      try codeSignatureCheck.perform(applicationURL)
+    } catch {
+      throw RuntimeProvenanceVerificationError.codeSignatureInvalid
+    }
+  }
+
+  private static func verifiedMetadata(
+    resourceRoot: URL,
+    manifest: UpstreamRuntimeManifest
+  ) throws -> VerifiedMetadata {
+    let contractData = try Data(
+      contentsOf: resourceRoot.appendingPathComponent("provenance-contract.json"))
+    let contract = try JSONDecoder().decode(RuntimeProvenanceContract.self, from: contractData)
+    let storedManifestData = try Data(
+      contentsOf: resourceRoot.appendingPathComponent("manifest.json"))
+    let storedManifest = try UpstreamRuntimeManifest.decodeStrictly(from: storedManifestData)
+    let receiptData = try Data(
+      contentsOf: resourceRoot.appendingPathComponent(
+        ".rabbisir-runtime-provenance.json"))
+    let receipt = try JSONDecoder().decode(RuntimeProvenanceReceipt.self, from: receiptData)
+    let expectedInventory = RuntimePayloadInventory(
+      algorithm: contract.output.algorithm,
+      digest: contract.output.digest,
+      fileCount: contract.output.fileCount,
+      symlinkCount: contract.output.symlinkCount
+    )
+    let contractDigest = sha256(contractData)
+    guard contract.schemaVersion == 3,
+      storedManifest == manifest,
+      manifest.schemaVersion == contract.manifest.schemaVersion,
+      manifest.upstreamVersion == contract.upstream.version,
+      manifest.rabbisirVersion == contract.manifest.rabbisirVersion,
+      manifest.upstreamCommit == contract.upstream.commit,
+      manifest.upstreamTree == contract.upstream.tree,
+      manifest.provenanceContractSHA256 == contractDigest,
+      manifest.runtimeInventorySHA256 == contract.output.digest,
+      manifest.executable == contract.launch.executable
+    else { throw RuntimeProvenanceVerificationError.contractMismatch }
+    guard receipt.schemaVersion == 3,
+      receipt.contractSHA256 == contractDigest,
+      receipt.upstreamCommit == contract.upstream.commit
+    else { throw RuntimeProvenanceVerificationError.receiptMismatch }
+    guard receipt.inventory == expectedInventory,
+      expectedInventory.algorithm == RuntimePayloadInventory.supportedAlgorithm
+    else { throw RuntimeProvenanceVerificationError.receiptInventoryMismatch }
+    let launcher = try RuntimeCanonicalPath.resolve(
+      contract.launch.executable, under: resourceRoot)
+    let node = try RuntimeCanonicalPath.resolve(contract.launch.node, under: resourceRoot)
+    let spawnHelper = try RuntimeCanonicalPath.resolve(
+      contract.launch.nodeSpawnHelper,
+      under: resourceRoot
+    )
+    guard FileManager.default.isExecutableFile(atPath: launcher.path),
+      FileManager.default.isExecutableFile(atPath: node.path),
+      FileManager.default.isExecutableFile(atPath: spawnHelper.path)
+    else { throw RuntimeProvenanceVerificationError.invalidPayload }
+    guard
+      try sha256(
+        file: try RuntimeCanonicalPath.resolve(
+          contract.output.nativeProjection.path,
+          under: resourceRoot
+        )) == contract.output.nativeProjection.sha256
+    else { throw RuntimeProvenanceVerificationError.projectionMismatch }
+    return VerifiedMetadata(
+      contract: contract,
+      receipt: receipt,
+      expectedInventory: expectedInventory,
+      node: node
+    )
   }
 
   static func sha256(_ data: Data) -> String {
@@ -263,8 +356,25 @@ enum RuntimeProvenanceVerifier {
 struct RuntimeProvenanceCheck: Sendable {
   let perform: @Sendable (URL, UpstreamRuntimeManifest) throws -> Void
 
-  static let live = Self { resourceRoot, manifest in
-    try RuntimeProvenanceVerifier.verify(resourceRoot: resourceRoot, manifest: manifest)
+  static let live = live()
+
+  static func live(
+    codeSignatureCheck: RuntimeCodeSignatureCheck = .live
+  ) -> Self {
+    Self { resourceRoot, manifest in
+      if let applicationURL = RuntimePackagedApplication.officialProductionApp(
+        containing: resourceRoot
+      ) {
+        try RuntimeProvenanceVerifier.verifySignedPackage(
+          resourceRoot: resourceRoot,
+          manifest: manifest,
+          applicationURL: applicationURL,
+          codeSignatureCheck: codeSignatureCheck
+        )
+      } else {
+        try RuntimeProvenanceVerifier.verify(resourceRoot: resourceRoot, manifest: manifest)
+      }
+    }
   }
 }
 

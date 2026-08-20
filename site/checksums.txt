@@ -1,4 +1,0 @@
-20d922236ea35cfd041f65ff7bdb1a4ee7ab6621b40cc18fced4eca0d6b230ee  Rabbisir-0.1.0-1.zip
-06a01d6e0bc86b33ce6febab14658fcc5b6da2ab0f236aa60f0ccee4bb82adc1  Rabbisir-0.1.0-1.dmg
-a4889ee56246cfaada4aab3ce45aad9d2829712a389995ad0f3ce63dcc0b3574  PublicReleaseManifest.json
-f9866a0034cab42d7bde70900156a2806d6ec84f1f49320c3daec71c86b81dda  PublicReleaseManifest.json.sha256

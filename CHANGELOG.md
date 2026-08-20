@@ -7,6 +7,12 @@ versions follow the Rabbisir product-version and release-stage policy in
 [`docs/VERSIONING.md`](docs/VERSIONING.md); the upstream compatibility baseline is recorded
 separately.
 
+## [0.1.0 · r1.01] - 2026-08-20
+
+### Fixed
+
+- BUG 修复
+
 ## [0.1.0 · r1.00] - 2026-08-18
 
 ### Added

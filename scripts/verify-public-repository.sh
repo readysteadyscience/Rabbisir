@@ -70,10 +70,6 @@ for required in \
   site/assets/rabbisir/yelzap-avatar.png \
   site/assets/rabbisir/yelzap-wechat-qr-v1.png \
   site/DOWNLOADS.md \
-  site/PagesSourceManifest.json \
-  site/appcast.xml \
-  site/checksums.txt \
-  site/release.json \
   site/UPSTREAM.md \
   site/LICENSE \
   Sources/RabbisirCore/Resources/VendorRuntime/manifest.json \
