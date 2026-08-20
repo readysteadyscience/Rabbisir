@@ -37,7 +37,7 @@
   "verification": {
     "downloadsSHA256": "c249ba284ef2460f1f0e6de64b41a02eaf9f7fca737f1501b762a8e0ba3d21a3",
     "governanceSHA256": "934d38fafaf3826171a3d8143919490dbcca5b1a0f8b4193ef8b99426c4e2928",
-    "pagesSHA256": "754f6a328c09c0de3784168dcc768e77a75709d4de6a027308662af22c0f5f20",
+    "pagesSHA256": "c51d050e953e05b722e796739ec4e679b6535915c13f55b26f30c0a61fafc626",
     "publicRepositorySHA256": "e2df383d02950e7d4a39cd7a9faa91a45fd08e612bede8513a72553e5c2203f4"
   },
   "workflow": {

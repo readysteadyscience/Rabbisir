@@ -128,7 +128,15 @@ cmp -s LICENSE site/LICENSE \
   || fail "the Pages-local license differs from the reviewed Rabbisir root license"
 
 private_site_pattern='app''cast|spar''kle|support rab''bisir|appear''ance|wall''paper|official''overlay|overlay''receipt|developer id app''lication:|apple team i''d|begin (rsa |ec |openssh )?private ke''y|/use''rs/[^/ ]+|/pri''vate/tm''p/|deepseek_api''_key[[:space:]]*='
-if rg -n -i "$private_site_pattern" site/index.html site/download.html site/styles.css site/site.js site/assets site/DOWNLOADS.md site/UPSTREAM.md site/LICENSE
+run_private_site_scan() {
+  if command -v rg >/dev/null 2>&1
+  then
+    rg -n -i "$private_site_pattern" site/index.html site/download.html site/styles.css site/site.js site/assets site/DOWNLOADS.md site/UPSTREAM.md site/LICENSE
+  else
+    grep -E -n -i -r -I -- "$private_site_pattern" site/index.html site/download.html site/styles.css site/site.js site/assets site/DOWNLOADS.md site/UPSTREAM.md site/LICENSE
+  fi
+}
+if run_private_site_scan
 then
   fail "private, official-only, credential, or local-path material entered the site"
 else
