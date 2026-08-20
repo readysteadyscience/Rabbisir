@@ -1,6 +1,6 @@
 # Versioning policy
 
-This policy governs only the public version displayed by an authorized formal Rabbisir release. It
+This policy governs the public version displayed by a published Rabbisir release. It
 does not allocate a public version to a DEV build, local build, candidate, pull request, or CI run.
 
 ## Public version format
@@ -12,7 +12,7 @@ Every public Rabbisir release uses exactly this format:
 ```
 
 The product version is `RabbisirVersion.displayVersion`. It must exactly equal
-`RabbisirVersion.appleShortVersion`, which becomes `CFBundleShortVersionString` in an authorized
+`RabbisirVersion.appleShortVersion`, which becomes `CFBundleShortVersionString` in a published
 official build. The `r` suffix identifies the Rabbisir release stage and patch; it is release-note
 metadata and is not part of Apple's short version.
 
@@ -46,19 +46,18 @@ become `r2.00`; that transition is permitted only as an explicitly justified new
 compatibility change cannot retain or increment the previous Rabbisir stage and must identify the
 previous compatibility version and commit independently from the public product label.
 
-## DEV and internal versions
+## Development versions
 
-DEV and local builds use only their existing internal build and DEV identifiers. They neither consume
+DEV and local builds use only their existing build and DEV identifiers. They neither consume
 nor reserve a public version. Current internal version values are not retroactively reinterpreted as
 public release versions.
 
-Only the dedicated release task, acting under explicit authorization for the current release, may
-change a public version or update version-bearing release artifacts.
+Public versions change only when maintainers prepare a published release.
 
-## Candidate validation
+## Version validation
 
-Before candidate freeze, run the validation command with the public candidate and declared transition
-type. The validator reads both Rabbisir product constants and the frozen runtime manifest:
+Before proposing a public version change, run the validation command with the declared transition
+type. The validator reads both Rabbisir product constants and the tracked runtime manifest:
 
 ```sh
 scripts/verify-release-version.sh \
@@ -75,5 +74,5 @@ requires an integrated and independently verified manifest baseline plus explici
 `--previous-upstream-version` and `--previous-upstream-commit` values; these inputs are not displayed
 as the Rabbisir product version.
 
-The script validates version-policy transitions. It does not grant release authority, write version
-metadata, sign, notarize, publish, install, or change Git state.
+The script validates version-policy transitions. It does not write version metadata, change Git
+state, or publish artifacts.

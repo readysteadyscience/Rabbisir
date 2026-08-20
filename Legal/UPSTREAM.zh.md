@@ -17,5 +17,5 @@ Rabbisir 仓库不包含上游 monorepo，只包含原生 App、兼容桥、受�
 
 更新基线时，维护者在独立检出中比较目标上游版本，刷新受版本控制的兼容补丁与来源契约，
 通过 `scripts/rebuild-vendor-runtime.sh` 重建，再由 `scripts/stage-vendor-runtime.sh` 暂存已验证
-收据，并运行原生测试与真实 App 工作流。上游更新不授权推送、发布、签名、公证、部署、
-凭据变更或仓库可见性变更。
+收据，并运行原生测试与真实 App 工作流。上游更新只有完成兼容性审查与验证后，才会进入
+公开发布的 Rabbisir 版本。

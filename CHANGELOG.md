@@ -11,7 +11,7 @@ separately.
 
 ### Added
 
-- Initial native macOS application, public development guidance, release governance, and version
+- Initial native macOS application, public development and contribution guidance, and version
   policy.
 
 Release comparison links are added when the public repository and first release tag exist.

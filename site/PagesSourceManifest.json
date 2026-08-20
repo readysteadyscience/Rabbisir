@@ -35,10 +35,10 @@
     }
   },
   "verification": {
-    "downloadsSHA256": "37d0489163b2aca4a788ed644fe90ba23c8d787b4b560ebc9ff2693ae7f740a5",
-    "governanceSHA256": "f6379ccea8467f136346e60a6ff08a4c5973cf9b7cdc1ee7c5e24472aaf4497f",
-    "pagesSHA256": "91b404befadb402a587ca28698d1540234f9141ff8bd916c23050d2a80ee3be7",
-    "publicRepositorySHA256": "7e4f51603d06023dc45dcc10bdba127dab994377d64eb2b3e09366c4dd9d3480"
+    "downloadsSHA256": "74ff1f6f3798cdbfb319cf88a81b587e961131f0ecb230f4022db8a4497eebdf",
+    "governanceSHA256": "934d38fafaf3826171a3d8143919490dbcca5b1a0f8b4193ef8b99426c4e2928",
+    "pagesSHA256": "795f5086e54ea1eb79b7dde0a9451a58e0f09a08efe572489ff5fab2dd803f8c",
+    "publicRepositorySHA256": "f502b9614d7a17ef909f235e0970b82f72e860ec65cf0f968f7f70549d68aead"
   },
   "workflow": {
     "path": ".github/workflows/pages.yml",

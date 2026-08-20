@@ -8,7 +8,7 @@ English | [中文](README.zh.md)
   <p>
     <a href="https://readysteadyscience.github.io/Rabbisir/"><kbd><strong>Visit official website</strong></kbd></a>
   </p>
-  <p><sub>macOS 14+ · Apple silicon (arm64) · development preview</sub></p>
+  <p><sub>macOS 14+ · Apple silicon (arm64)</sub></p>
 </div>
 
 Rabbisir is an independent native macOS workspace built on [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).

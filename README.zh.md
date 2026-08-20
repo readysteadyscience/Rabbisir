@@ -8,7 +8,7 @@
   <p>
     <a href="https://readysteadyscience.github.io/Rabbisir/"><kbd><strong>进入官方官网</strong></kbd></a>
   </p>
-  <p><sub>macOS 14+ · Apple 芯片（arm64）· 开发预览</sub></p>
+  <p><sub>macOS 14+ · Apple 芯片（arm64）</sub></p>
 </div>
 
 Rabbisir 是基于 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 构建的独立原生 macOS 工作台。

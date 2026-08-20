@@ -21,13 +21,12 @@ be confused with an App bundle resource.
 
 ## Creator avatar
 
-`YelZapAvatar.png` is the unchanged 460×460 PNG used by Rabbisir's creator, YelZap. On 2026-08-18,
-the project owner identified the quarantined original as their established creator avatar and
-explicitly authorized those unchanged bytes for public redistribution in the Rabbisir source,
-public App, and official App. The restored file is byte-for-byte identical to that original.
+`YelZapAvatar.png` is the unchanged 460×460 PNG used by Rabbisir's creator, YelZap. The creator
+explicitly authorized those unchanged bytes for public redistribution in Rabbisir source and product
+surfaces.
 
 - Authorizing creator and rights holder: YelZap
-- Source: creator-supplied original retained in the project-local asset quarantine during rights review
+- Source: creator-supplied original
 - SHA-256: `4d30bc3ccdc9b646a4ee4e3a230f00b855b07b04f2011dec81290a3fe27d395d`
 - Permitted use: unchanged identification of the Rabbisir creator in Rabbisir
 

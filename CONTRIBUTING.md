@@ -21,11 +21,9 @@ The required review scope, severity model, evidence format, and independent re-v
 defined in [`docs/CODE_REVIEW.md`](docs/CODE_REVIEW.md). A passing local run or CI job alone is not a
 maintainer review conclusion and does not make a change releasable.
 
-When a pull request is intended for merge, release preparation, or publication, its exact scope and
-validation evidence first enter independent review. Only a `Pass` conclusion with reviewed scope,
-evidence, and uncovered risks may enter release governance. This is a required review-to-release
-handoff protocol, not an automated merge or release; every external GitHub or distribution action
-still requires explicit user authorization.
+Every pull request supplies its exact scope and validation evidence for maintainer review. Only a
+`Pass` conclusion with reviewed scope, evidence, and uncovered risks may be merged. Official
+publication is maintained outside the contributor workflow.
 
 ## Development setup
 
@@ -58,8 +56,7 @@ default derived resource bundles, and fail if a generated public bundle contains
 the reviewed manifest. Direct `swift build` and `swift test` are not supported project verification
 commands because they may reuse stale derived resources.
 
-Successful local validation establishes a reviewable Open source candidate only. It does not authorize a
-commit, push, signature, notarization, publication, deployment, production installation, or any
-production business operation. Maintainers follow the separately authorized release workflow in
-[`docs/RELEASING.md`](docs/RELEASING.md). The development gates remain documented in
+Successful local validation establishes a reviewable Open source contribution only; it does not make
+the resulting build an official Rabbisir distribution. Public release information is in
+[`docs/RELEASING.md`](docs/RELEASING.md), and development gates are documented in
 [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md).

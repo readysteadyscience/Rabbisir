@@ -18,47 +18,41 @@ test -f docs/RELEASING.md || fail "missing docs/RELEASING.md"
 
 grep -q '^# Rabbisir public-source development rules$' AGENTS.md \
   || fail "AGENTS.md lacks the public-source development rules"
-grep -q 'Never commit, push, publish, sign, notarize, deploy, install,' AGENTS.md \
-  || fail "AGENTS.md lacks the external-action authorization boundary"
+grep -q 'Use a branch and pull request for contributions' AGENTS.md \
+  || fail "AGENTS.md lacks the public contribution boundary"
 grep -q 'Public builds use only the `RabbisirOpen` product' AGENTS.md \
   || fail "AGENTS.md lacks the public product boundary"
-grep -q 'Pages deployment remains a' AGENTS.md \
-  || fail "AGENTS.md lacks the independent Pages deployment boundary"
-grep -q 'See `docs/DELIVERY_WORKFLOW.md` for the separation' AGENTS.md \
-  || fail "AGENTS.md lacks the delivery-governance reference"
+grep -q 'distribution implementation or configuration outside this repository' AGENTS.md \
+  || fail "AGENTS.md lacks the public distribution boundary"
 grep -q 'Read-only review boundary' docs/CODE_REVIEW.md \
   || fail "CODE_REVIEW.md lacks the read-only boundary"
 grep -q 'Finding severity' docs/CODE_REVIEW.md \
   || fail "CODE_REVIEW.md lacks the severity model"
 grep -q 'Review conclusion format' docs/CODE_REVIEW.md \
   || fail "CODE_REVIEW.md lacks the conclusion format"
-grep -q 'Mandatory handoff closure' docs/CODE_REVIEW.md \
-  || fail "CODE_REVIEW.md lacks the mandatory handoff closure"
+grep -q 'Repair and re-verification loop' docs/CODE_REVIEW.md \
+  || fail "CODE_REVIEW.md lacks the repair loop"
 grep -q 'maintainer review conclusion' CONTRIBUTING.md \
   || fail "CONTRIBUTING.md lacks the maintainer review requirement"
-grep -q 'Private official-app review' docs/DEVELOPMENT.md \
-  || fail "DEVELOPMENT.md lacks the private official-app review gate"
-grep -q 'Repair and independent re-verification' docs/DEVELOPMENT.md \
-  || fail "DEVELOPMENT.md lacks the repair re-verification gate"
-grep -q 'Private-repository governance' docs/DEVELOPMENT.md \
-  || fail "DEVELOPMENT.md lacks the reviewed-candidate handoff"
-grep -q 'handoff sequence is a mandatory protocol' docs/DEVELOPMENT.md \
-  || fail "DEVELOPMENT.md lacks the mandatory handoff boundary"
-grep -q '## Sub agent use' docs/DEVELOPMENT.md \
-  || fail "DEVELOPMENT.md lacks the Sub agent guidance"
-grep -q 'unresolved review finding leaves the candidate at `NO-GO`' docs/RELEASING.md \
-  || fail "RELEASING.md lacks the unresolved-review release blocker"
-grep -q 'Open-source governance accepts a candidate only after the' docs/RELEASING.md \
-  || fail "RELEASING.md lacks the reviewed-candidate acceptance gate"
-grep -q '^2\. Private official-app review independently reviews that complete candidate\.$' \
-  docs/DELIVERY_WORKFLOW.md \
-  || fail "DELIVERY_WORKFLOW.md lacks the stage 2 review"
-grep -q '^3\. Private-repository governance freezes provenance and prepares the private transaction\.$' \
-  docs/DELIVERY_WORKFLOW.md \
-  || fail "DELIVERY_WORKFLOW.md lacks the stage 3 handoff"
-grep -q '^Findings return to primary development\.' docs/DELIVERY_WORKFLOW.md \
-  || fail "DELIVERY_WORKFLOW.md lacks the defect-return loop"
-grep -q '^Evidence transfer between stages may be automatic\.' docs/DELIVERY_WORKFLOW.md \
-  || fail "DELIVERY_WORKFLOW.md lacks the automatic evidence-transfer boundary"
+grep -q '## Public contribution workflow' docs/DEVELOPMENT.md \
+  || fail "DEVELOPMENT.md lacks the public contribution workflow"
+grep -q 'Pull request and review' docs/DEVELOPMENT.md \
+  || fail "DEVELOPMENT.md lacks the review gate"
+grep -q '^# Public contribution workflow$' docs/DELIVERY_WORKFLOW.md \
+  || fail "DELIVERY_WORKFLOW.md lacks the public contribution workflow"
+grep -q '^## Public boundary$' docs/DELIVERY_WORKFLOW.md \
+  || fail "DELIVERY_WORKFLOW.md lacks the public boundary"
+grep -q '^# Public release information$' docs/RELEASING.md \
+  || fail "RELEASING.md lacks public release information"
+grep -q '^## Published release$' docs/RELEASING.md \
+  || fail "RELEASING.md lacks the published release record"
 
-echo "verify-code-review-governance: seven-stage review requirements are present"
+if rg -n -i \
+  'seven-stage|private official-app review|private-repository governance|public-version review|open-source governance|Rabbisir｜[1-5]|private candidate|candidate freeze|official-only overlay|release summary records|local-only, ignored archive|step-specific authorization|exact-action authorization|signing/notarization|sign, notarize|stapled.*Gatekeeper' \
+  AGENTS.md CONTRIBUTING.md CHANGELOG.md README.md README.zh.md ASSETS.md NOTICE.md \
+  docs .github/pull_request_template.md Legal/*.md site/*.md
+then
+  fail "public documentation contains internal delivery or distribution-process details"
+fi
+
+echo "verify-code-review-governance: public contribution and documentation boundaries are present"

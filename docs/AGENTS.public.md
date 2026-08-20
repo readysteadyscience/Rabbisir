@@ -1,27 +1,25 @@
 # Rabbisir public-source development rules
 
 Rabbisir is a native macOS application. Keep user-visible UI in SwiftUI or AppKit; the staged vendor
-runtime is an App-private compatibility component, not a second product surface.
+runtime is an App-owned compatibility component, not a second product surface.
 
-- Preserve unrelated worktree changes. Never commit, push, publish, sign, notarize, deploy, install,
-  or change repository visibility without explicit authorization for that exact action.
+- Preserve unrelated working-tree changes and keep contributions scoped to the public source tree.
+- Use a branch and pull request for contributions. Do not push to protected branches, change
+  repository settings, or publish an official distribution from a contributor checkout.
 - Public builds use only the `RabbisirOpen` product. Run
   `scripts/build-and-run-open.sh --verify-first-run` for an unsigned, isolated, temporary App
-  acceptance build. Do not create or commit an Open App package, DMG, ZIP, or Release asset.
-- Keep official-only update/distribution features, private overlays, contribution/payment resources,
-  signing/notarization material, credentials, user data, local archives, and private configuration
-  outside this source tree.
-- Use `scripts/stage-vendor-runtime.sh` only with separately reviewed, receipted inputs. Generated
-  runtime payloads stay ignored and must pass `scripts/verify-staged-runtime.sh` before consumption.
+  acceptance build. Do not commit generated App packages, DMGs, ZIPs, or runtime payloads.
+- Keep credentials, user data, personal paths, task transcripts, unpublished plans, and official
+  distribution implementation or configuration outside this repository.
+- Use `scripts/stage-vendor-runtime.sh` only with inputs that satisfy the tracked provenance contract.
+  Generated runtime payloads stay ignored and must pass `scripts/verify-staged-runtime.sh`.
 - Run `scripts/test-public-swiftpm.sh` after source changes. Run
   `scripts/build-and-run-open.sh --verify-first-run` when startup, resources, windows, or runtime
   behavior changes. Direct `swift build` and `swift test` are not verification paths because they can
   reuse unreviewed derived resource bundles.
-- Keep public documentation current and concise. Internal plans, task transcripts, screenshots,
-  personal paths, credentials, and unreleased distribution material do not belong here.
+- Keep public documentation current and concise.
 - Keep the public website inside the reviewed static `site/` capsule and run
-  `scripts/verify-pages-site.sh` after website or Pages-workflow changes. Pages deployment remains a
-  separate, manual-only external transaction; a source push does not authorize website publication.
+  `scripts/verify-pages-site.sh` after website-source changes.
 
-See `docs/DELIVERY_WORKFLOW.md` for the separation between local evidence, independent review,
-repository governance, and separately authorized external actions.
+See [`../CONTRIBUTING.md`](../CONTRIBUTING.md), [`DEVELOPMENT.md`](DEVELOPMENT.md), and
+[`DELIVERY_WORKFLOW.md`](DELIVERY_WORKFLOW.md) for the public contribution workflow.

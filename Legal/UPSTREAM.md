@@ -22,5 +22,4 @@ To update the baseline, maintainers compare a requested upstream revision in the
 refresh the tracked compatibility patches and provenance contract, rebuild with
 `scripts/rebuild-vendor-runtime.sh`, stage the verified receipt with
 `scripts/stage-vendor-runtime.sh`, and run the native tests plus real App workflows. An upstream
-update does not authorize a push, release, signing, notarization, deployment, credential change, or
-repository visibility change.
+update appears in a published Rabbisir version only after compatibility review and validation.

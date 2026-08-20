@@ -27,7 +27,7 @@ Validation evidence and exceptions:
 - Review conclusion: `Pass` / `Needs changes` / `Unverified`
 - Review evidence, findings, and severity:
 - Repair and independent re-verification evidence, if applicable:
-- Review-to-release handoff: reviewed scope, evidence, uncovered risks, or `Not seeking release`
+- Release impact, or `Not seeking release`:
 
 A completed CI run is not, by itself, a maintainer review conclusion. See
 [`docs/CODE_REVIEW.md`](../docs/CODE_REVIEW.md).
@@ -37,5 +37,5 @@ A completed CI run is not, by itself, a maintainer review conclusion. See
 - [ ] No credentials, user data, personal paths, private service details, screenshots, task transcripts, or unpublished plans are included.
 - [ ] Generated vendor runtime payloads remain excluded from Git.
 - [ ] Upstream protocol identifiers, licenses, notices, and attribution remain compatible.
-- [ ] Any formal-release version change has an authorized transition and passes `scripts/verify-release-version.sh`.
+- [ ] Any public version change follows `docs/VERSIONING.md` and passes `scripts/verify-release-version.sh`.
 - [ ] This pull request does not claim or perform a production release.

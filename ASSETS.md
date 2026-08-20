@@ -2,7 +2,7 @@
 
 ## Rabbisir Logo
 
-`Sources/RabbisirCore/Resources/Brand/RabbisirLogo.png` is a user-owned brand asset supplied from the user's private local asset library and explicitly authorized for Rabbisir. The repository copy preserves the supplied PNG bytes without segmentation, redrawing, masks, or derivative animation assets.
+`Sources/RabbisirCore/Resources/Brand/RabbisirLogo.png` is a creator-supplied brand asset authorized for Rabbisir. The repository copy preserves the supplied PNG bytes without segmentation, redrawing, masks, or derivative animation assets.
 
 - SHA-256: `f04917ae7a975b2b97678429177d2b02c80ccaacfb95141825598f755c1fbf5c`
 - Pixel size: 2560×2560 with alpha

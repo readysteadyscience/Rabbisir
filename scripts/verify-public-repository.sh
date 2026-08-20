@@ -82,7 +82,12 @@ do
 done
 
 scripts/verify-documentation-links.sh
-scripts/verify-pages-site.sh
+if test -f Sources/RabbisirCore/Resources/VendorRuntime/.rabbisir-runtime-provenance.json
+then
+  scripts/verify-pages-site.sh
+else
+  RABBISIR_PUBLIC_SOURCE_EXPORT=true scripts/verify-pages-site.sh
+fi
 scripts/verify-code-review-governance.sh
 scripts/test-release-version-policy.sh
 scripts/test-runtime-provenance.sh
@@ -164,15 +169,13 @@ grep -q 'Public builds use only the `RabbisirOpen` product' docs/AGENTS.public.m
   || fail "public AGENTS rules do not bind the Open product"
 grep -q 'RabbisirApplication.runOpenSource()' Sources/RabbisirOpenApp/main.swift \
   || fail "the public launcher does not bind the Open identity"
-grep -q 'Without current step-specific authorization' docs/DEVELOPMENT.md \
-  || fail "development workflow lacks the current step-specific authorization gate"
-grep -q 'Evidence transfer between stages may be automatic' docs/DELIVERY_WORKFLOW.md \
-  || fail "delivery workflow lacks the automatic evidence-transfer boundary"
-grep -q 'explicit authorization for the exact action' docs/DELIVERY_WORKFLOW.md \
-  || fail "delivery workflow lacks the exact-action authorization boundary"
-grep -q 'explicit authorization for that exact action' docs/AGENTS.public.md \
-  || fail "public AGENTS rules do not separate validation from external authority"
-grep -q 'does not authorize a' CONTRIBUTING.md \
+grep -q '## Public contribution workflow' docs/DEVELOPMENT.md \
+  || fail "development documentation lacks the public contribution workflow"
+grep -q 'Official downloads are published through' docs/DELIVERY_WORKFLOW.md \
+  || fail "delivery workflow lacks the public download boundary"
+grep -q 'distribution implementation or configuration outside this repository' docs/AGENTS.public.md \
+  || fail "public AGENTS rules do not exclude distribution internals"
+grep -q 'does not make' CONTRIBUTING.md \
   || fail "CONTRIBUTING.md does not state the contributor release boundary"
 
 for forbidden_root in \

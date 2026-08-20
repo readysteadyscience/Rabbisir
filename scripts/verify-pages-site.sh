@@ -109,7 +109,7 @@ verify_sha256 4d30bc3ccdc9b646a4ee4e3a230f00b855b07b04f2011dec81290a3fe27d395d \
   site/assets/rabbisir/yelzap-avatar.png
 verify_sha256 caa389488834e64489ca805937d8d1bf5a745b388a1138b429556dc1684bcc05 \
   site/assets/rabbisir/yelzap-wechat-qr-v1.png
-verify_sha256 37d0489163b2aca4a788ed644fe90ba23c8d787b4b560ebc9ff2693ae7f740a5 \
+verify_sha256 74ff1f6f3798cdbfb319cf88a81b587e961131f0ecb230f4022db8a4497eebdf \
   site/DOWNLOADS.md
 verify_sha256 5082086b3f32b37da781c0a58216875f10e3281dbba8a297a0a5e26e8319d3df \
   site/UPSTREAM.md
@@ -280,8 +280,10 @@ reject_pattern_i \
   'deepseek[^<]*(logo|mark|avatar)|deepseek-(logo|mark|avatar)|wechat[^<]*(logo|mark)|wechat-(logo|mark)' \
   site/index.html site/assets
 
-grep -q 'cabcd17d40403a73b3eac517dfcc02e2df3a42b32a68093307f727080d1f9f28' docs/WEBSITE.md \
-  || fail "the final website source baseline is not recorded"
+grep -q '^# Public website$' docs/WEBSITE.md \
+  || fail "the public website boundary is not documented"
+grep -q '^## Downloads$' docs/WEBSITE.md \
+  || fail "the public download surface is not documented"
 grep -q 'https://about.x.com/en/who-we-are/brand-toolkit' Legal/BRAND_ASSETS.md \
   || fail "the official X Brand Toolkit source is not recorded"
 grep -q 'caa389488834e64489ca805937d8d1bf5a745b388a1138b429556dc1684bcc05' \
@@ -462,9 +464,8 @@ if (!archive || !appcast.includes("production") || !appcast.includes(archive.url
 const downloads = fs.readFileSync(path.join(root, "site/DOWNLOADS.md"), "utf8");
 if (/No official Rabbisir installation asset is available|目前尚无可用的 Rabbisir 官方安装包/.test(downloads) ||
     !downloads.includes(release.releaseURL) || !release.assets.filter((asset) => /\.(dmg|zip)$/.test(asset.name))
-      .every((asset) => downloads.includes(asset.url) && downloads.includes(asset.sha256) && downloads.includes(String(asset.size))) ||
-    !downloads.includes("Official installation acceptance is not yet complete") || !downloads.includes("正式安装验收尚未完成"))
-  fail("download status does not describe the frozen assets and pending installation acceptance");
+      .every((asset) => downloads.includes(asset.url) && downloads.includes(asset.sha256) && downloads.includes(String(asset.size))))
+  fail("download status does not describe the published Release assets");
 NODE
 
 echo "verify-pages-site: fixed public base and release Pages integration passed"
