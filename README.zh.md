@@ -6,11 +6,7 @@
   <img src="Sources/RabbisirCore/Resources/Brand/RabbisirLogoTight.png" width="116" alt="Rabbisir 标识">
   <p><strong>Built on DeepSeek Harness</strong></p>
   <p>
-    <a href="https://readysteadyscience.github.io/Rabbisir/">官网</a>
-    ·
-    <a href="https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.0-r1.00/Rabbisir-0.1.0-1.dmg"><strong>下载 App（DMG）</strong></a>
-    ·
-    <a href="https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.0-r1.00/Rabbisir-0.1.0-1.zip">签名更新归档（ZIP）</a>
+    <a href="https://readysteadyscience.github.io/Rabbisir/"><kbd><strong>进入官方官网</strong></kbd></a>
   </p>
   <p><sub>macOS 14+ · Apple 芯片（arm64）· 开发预览</sub></p>
 </div>
