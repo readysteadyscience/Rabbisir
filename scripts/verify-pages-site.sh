@@ -95,9 +95,9 @@ verify_sha256() {
     || fail "$file differs from the reviewed public-candidate digest"
 }
 
-verify_sha256 17128fa8be81aa53bc294c29cd7557aac1630d9cc1b18add225b13768e4e32a6 \
+verify_sha256 bfa97087b217b82f3d0a36baf73207d9cfc381f75cacb685268fd10f8f11d938 \
   site/index.html
-verify_sha256 e7d08a0cd79ce9b1a2fecbc04a2f82de2352cf1be93d2900ee83aa3527db5423 \
+verify_sha256 bc4413df4e736730f094787afc393380ac81dd924897fedf97e82baf53d6e9fd \
   site/download.html
 verify_sha256 34af02f7ae04c6f14216bde55207ab67cb195717dd2d49594e555bb97320c6ee \
   site/styles.css
@@ -195,7 +195,7 @@ expected_resources = {
     ("stylesheet", "styles.css"),
 }
 expected_script = [("site.js?v=20260815-wechat2", True)]
-dmg_url = "https://github.com/readysteadyscience/Rabbisir/releases/latest/download/Rabbisir-0.1.0-2.dmg"
+dmg_url = "https://github.com/readysteadyscience/Rabbisir/releases/latest/download/Rabbisir.dmg"
 zip_url = "https://github.com/readysteadyscience/Rabbisir/releases/latest/download/Rabbisir-0.1.0-2.zip"
 release_url = "https://github.com/readysteadyscience/Rabbisir/releases/latest"
 
@@ -317,12 +317,21 @@ grep -q '与 DeepSeek 不存在隶属、赞助或背书关系' site/index.html \
 grep -q '<span class="wechat-profile-label" data-en="WeChat" data-zh="微信">WeChat</span>' \
   site/index.html \
   || fail "the explicit bilingual WeChat contact entry is missing"
-official_dmg_url='https://github.com/readysteadyscience/Rabbisir/releases/latest/download/Rabbisir-0.1.0-2.dmg'
+official_dmg_url='https://github.com/readysteadyscience/Rabbisir/releases/latest/download/Rabbisir.dmg'
 official_zip_url='https://github.com/readysteadyscience/Rabbisir/releases/latest/download/Rabbisir-0.1.0-2.zip'
 grep -Fq "<a class=\"download-button\" href=\"$official_dmg_url\"" site/index.html \
   || fail "the homepage primary download does not point directly to the official DMG"
 grep -Fq "<a class=\"download-button download-primary\" href=\"$official_dmg_url\"" site/download.html \
   || fail "the download page primary action does not point directly to the official DMG"
+grep -Fq '<span data-en="Download" data-zh="下载">Download</span>' site/index.html \
+  || fail "the homepage download button must remain version-neutral"
+if grep -Fq 'data-en="Download ·' site/index.html \
+  || grep -Fq 'data-zh="下载 ·' site/index.html \
+  || grep -Eq '<a class="download-button( download-primary)?"[^>]*(Rabbisir [0-9]|Rabbisir v[0-9])' \
+    site/index.html site/download.html
+then
+  fail "a primary download action exposes a release version"
+fi
 grep -Fq "<a class=\"download-archive\" href=\"$official_zip_url\"" site/download.html \
   || fail "the signed update archive is not clearly separated on the download page"
 grep -q 'href="download.html" data-en="Release details" data-zh="下载信息"' site/index.html \
@@ -340,8 +349,15 @@ for expected_release_fact in \
   'ZIP · 148856673 bytes' \
   'e754098255d40a06522351c09512503e0900f994b13181da60fe9d585ef33627'
 do
-  grep -Fq "$expected_release_fact" site/download.html site/DOWNLOADS.md \
-    || fail "the maintenance-release download facts are incomplete"
+  grep -Fq "$expected_release_fact" site/download.html \
+    || fail "the browser-facing maintenance-release facts are incomplete"
+done
+for expected_versioned_asset in \
+  'Rabbisir-0.1.0-2.dmg' \
+  'Rabbisir-0.1.0-2.zip'
+do
+  grep -Fq "$expected_versioned_asset" site/DOWNLOADS.md \
+    || fail "the auditable source record omits a versioned release filename"
 done
 reject_pattern_i \
   "an excluded DeepSeek graphic or unverified WeChat graphic entered the site" \

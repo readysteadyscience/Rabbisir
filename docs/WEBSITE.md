@@ -35,15 +35,21 @@ scripts/verify-public-repository.sh
 ## Downloads
 
 The browser-facing download page is [`site/download.html`](../site/download.html). It presents the
-DMG as the primary installer and identifies the ZIP as the signed update archive. Filenames,
-supported platform, sizes, SHA-256 values, and the canonical Release link are recorded in the page
-and in the auditable source record [`site/DOWNLOADS.md`](../site/DOWNLOADS.md). `Rabbisir Open`
-contributor builds are not official downloadable Apps.
+DMG as the primary installer and identifies the ZIP as the signed update archive. The page records
+the supported platform, release, sizes, SHA-256 values, and canonical Release link. Versioned
+filenames and the same audit facts remain in the source record
+[`site/DOWNLOADS.md`](../site/DOWNLOADS.md). `Rabbisir Open` contributor builds are not official
+downloadable Apps.
 
-The primary actions use GitHub's stable `releases/latest/download/` route rather than a hard-coded
-release tag. A source commit does not prove those assets are public and does not deploy Pages. The
-release transaction must create and read back the exact DMG and ZIP before deploying this candidate;
-generated Release metadata and the signed production update feed are added only in that transaction.
+The primary DMG actions use the permanent GitHub path
+`releases/latest/download/Rabbisir.dmg`. Every formal Release must publish its reviewed DMG under
+that stable asset name, so the website always resolves to the newest formal installer without a site
+source edit. The button label and accessibility text do not embed a version. A source commit does not
+prove the asset is public and does not deploy Pages: the stable alias must resolve to the exact
+reviewed DMG before deploying a website candidate. The release, sizes, and SHA-256 values remain on
+the detail page; versioned filenames and the complete fact set remain in the auditable download
+record. Generated Release metadata and the signed production update feed are added only in the
+formal release transaction.
 
 ## 中文边界
 
@@ -53,10 +59,13 @@ Rabbisir 标识、创作者头像和微信联系二维码均遵守上文列出�
 
 脚本只保存 `rabbisir-language` 语言选择，不包含分析、Cookie、凭据、更新、支付或自动外跳逻辑。
 官网面向浏览器的下载页为 [`site/download.html`](../site/download.html)：DMG 是主要安装包，ZIP
-明确标记为签名更新归档。GitHub Release 链接、文件名、大小和 SHA-256 同时记录在该页面与
-可审计的 [`site/DOWNLOADS.md`](../site/DOWNLOADS.md) 源记录中；本地 `Rabbisir Open` 构建不是
-官方安装包。
+明确标记为签名更新归档。页面记录支持平台、版本、大小、SHA-256 和 GitHub Release 链接；
+版本化文件名及相同审计事实保留在 [`site/DOWNLOADS.md`](../site/DOWNLOADS.md) 源记录中。本地
+`Rabbisir Open` 构建不是官方安装包。
 
-主下载操作使用 GitHub 稳定的 `releases/latest/download/` 路径，不写死旧 Release 标签。源码
-提交不代表资产已经公开，也不会部署 Pages；只有发布事务创建并回读准确的 DMG、ZIP 后，才可
-部署该候选，并在同一事务中加入生成的 Release 元数据与已签名生产更新源。
+主 DMG 下载操作固定使用 GitHub 的永久路径 `releases/latest/download/Rabbisir.dmg`。每次正式
+Release 都必须以同一个 `Rabbisir.dmg` 资产名发布经审查的 DMG，使官网无需修改源码即可始终
+解析到最新正式安装包；按钮及其无障碍文本不嵌入版本号。源码提交不代表该稳定资产已经公开，
+也不会部署 Pages；部署网站候选前必须回读确认稳定入口指向本次经审查的准确 DMG。版本、大小
+和 SHA-256 继续显示在详情页，版本化文件名与完整事实集保留在可审计下载记录中；生成的 Release
+元数据和已签名生产更新源仍只在正式发布事务中加入。
