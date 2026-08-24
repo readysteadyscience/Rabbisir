@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-08-20T00:00:00Z",
+  "latest": "Rabbisir 0.1.0 · r1.01",
+  "contentReceiptSHA256": "32d7d7b83d3c2384c50d2fa83f42b7195a02c91898f0ecc44b099bb20b4a6d3b",
+  "source": {
+    "channel": "rabbisir-official-app",
+    "receipt": "official-app-release-source.json"
+  },
+  "releases": [
+    {
+      "version": "Rabbisir 0.1.0 · r1.01",
+      "publishedOn": "2026-08-20",
+      "title": {
+        "en": "Maintenance update",
+        "zh": "维护更新"
+      },
+      "summary": {
+        "en": "A focused update that makes everyday use smoother and more reliable.",
+        "zh": "一次聚焦日常体验的维护更新，让使用过程更顺畅、更可靠。"
+      },
+      "highlights": [
+        {
+          "en": "Resolved known issues affecting everyday use.",
+          "zh": "修复影响日常使用的已知问题。"
+        },
+        {
+          "en": "Improved overall stability while keeping the familiar workflow unchanged.",
+          "zh": "在保持熟悉工作流程不变的同时，改进整体稳定性。"
+        }
+      ]
+    },
+    {
+      "version": "Rabbisir 0.1.0 · r1.00",
+      "publishedOn": "2026-08-20",
+      "title": {
+        "en": "Initial official release",
+        "zh": "首个正式版本"
+      },
+      "summary": {
+        "en": "The first official Rabbisir App release for Apple silicon Macs.",
+        "zh": "面向 Apple 芯片 Mac 的首个 Rabbisir App 正式版本。"
+      },
+      "highlights": [
+        {
+          "en": "Introduced the native macOS workspace and conversation experience.",
+          "zh": "带来原生 macOS 工作台与对话体验。"
+        },
+        {
+          "en": "Established the public guidance, release governance, and version policy.",
+          "zh": "建立公开使用说明、发布治理与版本策略。"
+        }
+      ]
+    }
+  ]
+}

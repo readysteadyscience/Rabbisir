@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="dark">
     <meta name="theme-color" content="#080a0d">
-    <meta name="description" content="Download the official Rabbisir installer for Apple silicon Macs.">
-    <title>Download Rabbisir — macOS</title>
+    <meta name="description" content="Current and previous official Rabbisir App releases.">
+    <title>Rabbisir Release Details</title>
+    <link rel="canonical" href="https://readysteadyscience.github.io/Rabbisir/download.html">
     <link rel="icon" href="assets/rabbisir/rabbisir-mark-dark.png">
     <link rel="stylesheet" href="styles.css">
     <script src="site.js?v=20260815-wechat2" defer></script>
+    <script type="module" src="release-details.mjs"></script>
   </head>
-  <body class="download-page">
+  <body class="release-page">
     <header class="site-header">
       <div class="content-frame header-frame">
         <a class="brand" href="index.html" aria-label="Rabbisir home">
@@ -22,38 +24,27 @@
       </div>
     </header>
 
-    <main class="download-main">
-      <section class="download-detail" aria-labelledby="download-title">
-        <div class="content-frame download-detail-frame">
-          <p class="download-kicker" data-en="Official macOS release" data-zh="macOS 官方版本">Official macOS release</p>
-          <h1 class="download-title" id="download-title" data-en="Download Rabbisir" data-zh="下载 Rabbisir">Download Rabbisir</h1>
-          <p class="download-summary" data-en="The DMG is the primary installer for Apple silicon Macs." data-zh="DMG 是面向 Apple 芯片 Mac 的主要安装包。">The DMG is the primary installer for Apple silicon Macs.</p>
+    <main class="release-main">
+      <section class="release-intro" aria-labelledby="release-title">
+        <div class="content-frame release-intro-frame">
+          <p class="release-kicker" data-en="Official App releases" data-zh="正式 App 版本">Official App releases</p>
+          <h1 class="release-title" id="release-title" data-en="Release details" data-zh="版本迭代">Release details</h1>
+          <p class="release-summary" data-en="See what is new and improved in the current Rabbisir App, followed by earlier official versions." data-zh="了解当前 Rabbisir App 的新增功能与关键改进，并回顾此前的正式版本。">See what is new and improved in the current Rabbisir App, followed by earlier official versions.</p>
+          <p class="release-feed-status" id="release-feed-status" role="status" aria-live="polite" data-en="Loading official release information…" data-zh="正在载入正式版本信息…">Loading official release information…</p>
+        </div>
+      </section>
 
-          <div class="download-cta">
-            <a class="download-button download-primary" href="https://github.com/readysteadyscience/Rabbisir/releases/latest/download/Rabbisir.dmg" aria-label="Download the latest Rabbisir DMG" data-aria-en="Download the latest Rabbisir DMG" data-aria-zh="下载最新版 Rabbisir DMG"><span data-en="Download DMG" data-zh="下载 DMG">Download DMG</span></a>
-            <a class="download-archive" href="https://github.com/readysteadyscience/Rabbisir/releases/latest/download/Rabbisir-0.1.0-2.zip" aria-label="Download the latest Rabbisir 0.1.0 signed update archive" data-aria-en="Download the latest Rabbisir 0.1.0 signed update archive" data-aria-zh="下载最新 Rabbisir 0.1.0 签名更新归档" data-en="Signed update archive (ZIP)" data-zh="签名更新归档（ZIP）">Signed update archive (ZIP)</a>
+      <section class="release-history" aria-labelledby="release-history-title">
+        <div class="content-frame release-history-frame">
+          <div class="release-history-heading">
+            <h2 id="release-history-title" data-en="Version history" data-zh="版本记录">Version history</h2>
+            <p data-en="Latest first" data-zh="最新版本置顶">Latest first</p>
           </div>
-
-          <div class="download-facts">
-            <div class="download-fact">
-              <p class="download-fact-label" data-en="Release" data-zh="版本">Release</p>
-              <p class="download-fact-value">Rabbisir 0.1.0 · r1.01</p>
-            </div>
-            <div class="download-fact">
-              <p class="download-fact-label" data-en="System" data-zh="系统">System</p>
-              <p class="download-fact-value" data-en="macOS 14+ · Apple silicon (arm64)" data-zh="macOS 14 或更高版本 · Apple 芯片（arm64）">macOS 14+ · Apple silicon (arm64)</p>
-            </div>
-            <div class="download-fact">
-              <p class="download-fact-label">DMG · 108190487 bytes</p>
-              <p class="download-fact-value checksum-value"><code>b9817858cbe5cb8d1b2ab258478364324bee7849a239fb03919ffaa12cab6754</code></p>
-            </div>
-            <div class="download-fact">
-              <p class="download-fact-label">ZIP · 148856673 bytes</p>
-              <p class="download-fact-value checksum-value"><code>e754098255d40a06522351c09512503e0900f994b13181da60fe9d585ef33627</code></p>
-            </div>
+          <div class="release-list" id="release-list" aria-busy="true">
+            <article class="release-empty">
+              <p data-en="Release information will appear here when loading completes." data-zh="载入完成后，正式版本信息会显示在这里。">Release information will appear here when loading completes.</p>
+            </article>
           </div>
-
-          <p class="release-record"><a href="https://github.com/readysteadyscience/Rabbisir/releases/latest" target="_blank" rel="noopener noreferrer" aria-label="View the latest Rabbisir 0.1.0 release record (opens in a new tab)" data-aria-en="View the latest Rabbisir 0.1.0 release record (opens in a new tab)" data-aria-zh="查看最新 Rabbisir 0.1.0 Release 记录（在新标签页中打开）" data-en="View the latest Release record" data-zh="查看最新 Release 记录">View the latest Release record</a></p>
         </div>
       </section>
     </main>
