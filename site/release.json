@@ -1,33 +1,33 @@
 {
   "assets": [
     {
-      "name": "Rabbisir-0.1.0-2.zip",
-      "sha256": "e754098255d40a06522351c09512503e0900f994b13181da60fe9d585ef33627",
-      "size": 148856673,
-      "url": "https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.0-r1.01/Rabbisir-0.1.0-2.zip"
+      "name": "Rabbisir-0.1.1-3.zip",
+      "sha256": "8b9181caece4d52be51578ddf840c4eb81ba0765e0e3a6e476a2deca15a05a5f",
+      "size": 133304868,
+      "url": "https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.1-r1.02/Rabbisir-0.1.1-3.zip"
     },
     {
-      "name": "Rabbisir-0.1.0-2.dmg",
-      "sha256": "b9817858cbe5cb8d1b2ab258478364324bee7849a239fb03919ffaa12cab6754",
-      "size": 108190487,
-      "url": "https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.0-r1.01/Rabbisir-0.1.0-2.dmg"
+      "name": "Rabbisir-0.1.1-3.dmg",
+      "sha256": "af6b9fe4bc9364ae5a7903fd977fb96eb4e7e5e4424e68e01a9db9c4c972a64c",
+      "size": 96140379,
+      "url": "https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.1-r1.02/Rabbisir-0.1.1-3.dmg"
     },
     {
       "name": "PublicReleaseManifest.json",
-      "sha256": "5ce1310b1188e5a57ac58c60476cb9162d5c35cdce014b6f6dff64d70ce2dcd1",
-      "size": 1218,
-      "url": "https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.0-r1.01/PublicReleaseManifest.json"
+      "sha256": "12d7e5f49d768b6e3b2b9917af5a785910fec43bb3b3d16cd45cbf76473a2cfe",
+      "size": 1217,
+      "url": "https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.1-r1.02/PublicReleaseManifest.json"
     },
     {
-      "name": "PublicReleaseManifest.json.sha256",
-      "sha256": "c2c8eb2d50265d9ca0397c865bd57c5dc5d8f525ccc6505444a08a6ecf0efb02",
-      "size": 93,
-      "url": "https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.0-r1.01/PublicReleaseManifest.json.sha256"
+      "name": "checksums.txt",
+      "sha256": "4490bb121ddf38aabd33f140eb88ab0573a96f0d0c6800a48658db3363a37bf9",
+      "size": 346,
+      "url": "https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.1-r1.02/checksums.txt"
     }
   ],
-  "build": "2",
-  "releaseURL": "https://github.com/readysteadyscience/Rabbisir/releases/tag/v0.1.0-r1.01",
+  "build": "3",
+  "releaseURL": "https://github.com/readysteadyscience/Rabbisir/releases/tag/v0.1.1-r1.02",
   "schemaVersion": 1,
-  "tag": "v0.1.0-r1.01",
-  "version": "0.1.0"
+  "tag": "v0.1.1-r1.02",
+  "version": "0.1.1"
 }

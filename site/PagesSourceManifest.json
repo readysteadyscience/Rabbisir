@@ -2,46 +2,46 @@
   "files": [
     {
       "name": "appcast.xml",
-      "sha256": "3612a67ec567dec41e665c7dc33f49d0ec3971a02edccd89424888ca50344df9",
-      "size": 1334
+      "sha256": "95285cc2ac666728110eeec4fe9e9fa0874502ebafd1ed7304322e9489296916",
+      "size": 1342
     },
     {
       "name": "checksums.txt",
-      "sha256": "232398aae0724c563507773342c3f700d52f03f4275561ee5295d45d61e9ef8d",
-      "size": 367
+      "sha256": "4490bb121ddf38aabd33f140eb88ab0573a96f0d0c6800a48658db3363a37bf9",
+      "size": 346
     },
     {
       "name": "official-app-release-source.json",
-      "sha256": "778f644dc346e0bccd04f40ca550e1f3dcf15fd8c27533dfcdaf0f51b2d6604e",
+      "sha256": "1f4347014a7aaa42027fb4e7bb62ad48bfb93181b22c3ec6a8506a2919f27e4e",
       "size": 235
     },
     {
       "name": "official-app-release-source.json.sha256",
-      "sha256": "25bc95f9c6e4457f739249783ac0b039e363c033451185bedb5cf142669b9871",
+      "sha256": "9f8e01b404efe7cbddb6a95a6da9d94c7d726d4abdea8d0891621736fbf1c603",
       "size": 99
     },
     {
       "name": "official-app-releases.json",
-      "sha256": "8c0b7269033de65981fa33842928ff814878494af71e18db46ae24926786b50c",
-      "size": 1872
+      "sha256": "d8cdc7a87845ec854c9cf92dfafaf3245fa8d228d67e83f00d88d59b859db05d",
+      "size": 3456
     },
     {
       "name": "official-app-releases.json.sha256",
-      "sha256": "6bcae4e80be3b969548db12cb4bad53fd9075f08cb3ec68194176aa374e4755a",
+      "sha256": "4ca02e9715ee8fcd3c5e01679f54b3ffe1f1e31ba0184d011f12bc94b7c9f071",
       "size": 93
     },
     {
       "name": "release.json",
-      "sha256": "9f17a11c086e45f48ce9f15c1bb01ea6f4a18baeef98d9c14f4eb3c1888bc239",
-      "size": 1320
+      "sha256": "a977410e2e6123e9759f2446d5a410d1e9cfafbd54161834ebf4cec4b5d6313d",
+      "size": 1280
     }
   ],
   "publicAppcastURL": "https://readysteadyscience.github.io/Rabbisir/appcast.xml",
   "publicBase": {
-    "commit": "e7b4701751767af2178474dbc2023a7d69a860ec",
-    "tree": "f410dba77eb21ad26e322241538d761887f222ea"
+    "commit": "f96d1cf8ed92c23aea5c64b1b0ed864d4cd17338",
+    "tree": "2878035a6c775f9653ce5e8456e82749f29d9c0f"
   },
-  "releaseTag": "v0.1.0-r1.01",
+  "releaseTag": "v0.1.1-r1.02",
   "schemaVersion": 2,
   "runtime": {
     "contractSHA256": "81335a2a536338f095f7c77beb4f54fc8fe02e69728e701cfb35af54754ed053",
@@ -55,9 +55,9 @@
     }
   },
   "verification": {
-    "downloadsSHA256": "c249ba284ef2460f1f0e6de64b41a02eaf9f7fca737f1501b762a8e0ba3d21a3",
+    "downloadsSHA256": "226e2c2bf6968d7422a911453082a7ad4c209fd99a337505cdc7a7641bf13a4e",
     "governanceSHA256": "934d38fafaf3826171a3d8143919490dbcca5b1a0f8b4193ef8b99426c4e2928",
-    "pagesSHA256": "a4fd1b330fdf1b6c8c6b020c4d0dce78a9bb9b3826720adcf102ce6a08e5692f",
+    "pagesSHA256": "957acbd0bfc155ec4d1a029e11e6f14e7abeb90b332668b51c5c06c4731f3b3b",
     "publicRepositorySHA256": "590bd28e147b37748310f63418229fd49b7d7462a6cbca9219260de4f74627a5"
   },
   "workflow": {

@@ -131,7 +131,7 @@ verify_sha256 4d30bc3ccdc9b646a4ee4e3a230f00b855b07b04f2011dec81290a3fe27d395d \
   site/assets/rabbisir/yelzap-avatar.png
 verify_sha256 caa389488834e64489ca805937d8d1bf5a745b388a1138b429556dc1684bcc05 \
   site/assets/rabbisir/yelzap-wechat-qr-v1.png
-verify_sha256 c249ba284ef2460f1f0e6de64b41a02eaf9f7fca737f1501b762a8e0ba3d21a3 \
+verify_sha256 226e2c2bf6968d7422a911453082a7ad4c209fd99a337505cdc7a7641bf13a4e \
   site/DOWNLOADS.md
 verify_sha256 5082086b3f32b37da781c0a58216875f10e3281dbba8a297a0a5e26e8319d3df \
   site/UPSTREAM.md
@@ -436,8 +436,8 @@ if grep -q 'href="DOWNLOADS.md"' site/index.html site/download.html; then
   fail "raw Markdown remains exposed as a browser-facing download destination"
 fi
 for expected_versioned_asset in \
-  'Rabbisir-0.1.0-2.dmg' \
-  'Rabbisir-0.1.0-2.zip'
+  'Rabbisir-0.1.1-3.dmg' \
+  'Rabbisir-0.1.1-3.zip'
 do
   grep -Fq "$expected_versioned_asset" site/DOWNLOADS.md \
     || fail "the auditable source record omits a versioned release filename"

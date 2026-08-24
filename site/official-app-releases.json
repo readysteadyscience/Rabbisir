@@ -1,13 +1,47 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-20T00:00:00Z",
-  "latest": "Rabbisir 0.1.0 · r1.01",
-  "contentReceiptSHA256": "32d7d7b83d3c2384c50d2fa83f42b7195a02c91898f0ecc44b099bb20b4a6d3b",
+  "updatedAt": "2026-08-25T00:00:00Z",
+  "latest": "Rabbisir 0.1.1 · r1.02",
+  "contentReceiptSHA256": "6e42562cbefbddc9878476228a1f8fe9a9cbf4d81627deedd7ba6cf229c1de9d",
   "source": {
     "channel": "rabbisir-official-app",
     "receipt": "official-app-release-source.json"
   },
   "releases": [
+    {
+      "version": "Rabbisir 0.1.1 · r1.02",
+      "publishedOn": "2026-08-25",
+      "title": {
+        "en": "Expanded native workspace",
+        "zh": "原生工作空间扩展"
+      },
+      "summary": {
+        "en": "A broader native workspace for projects, browsing, files, delegated work, and clearer execution progress.",
+        "zh": "扩展原生工作空间，集中呈现项目、浏览、文件、委派任务与更清晰的执行进度。"
+      },
+      "highlights": [
+        {
+          "en": "Added a spatial workspace for projects, sessions, conversations, and detail panels.",
+          "zh": "新增空间工作区，集中组织项目、会话、对话与详情面板。"
+        },
+        {
+          "en": "Added activity history and background-task status for clearer progress tracking.",
+          "zh": "新增活动轨迹和后台任务状态，执行过程更易跟踪。"
+        },
+        {
+          "en": "Added built-in web browsing, text and code workbenches, and HTML preview.",
+          "zh": "新增内置网页浏览、文本与代码工作台及 HTML 预览。"
+        },
+        {
+          "en": "Added delegated-task and team views for following independent work and results.",
+          "zh": "新增委派任务与团队视图，可查看独立任务及其结果。"
+        },
+        {
+          "en": "Added image attachments, permission cues, workspace safety review, and interface refinements.",
+          "zh": "新增图片附件、权限提示、工作区安全审阅与界面细节改进。"
+        }
+      ]
+    },
     {
       "version": "Rabbisir 0.1.0 · r1.01",
       "publishedOn": "2026-08-20",
