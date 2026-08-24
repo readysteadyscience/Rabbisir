@@ -30,6 +30,8 @@ for required in \
   scripts/verify-public-candidate.sh \
   scripts/verify-public-dependency-lock.mjs \
   scripts/verify-public-export.sh \
+  scripts/test-official-release-feed.mjs \
+  scripts/verify-official-release-feed.mjs \
   scripts/verify-pages-site.sh \
   scripts/rebuild-vendor-runtime.sh \
   scripts/build-fresh-public-product.sh \
@@ -73,7 +75,13 @@ for required in \
   site/PagesSourceManifest.json \
   site/appcast.xml \
   site/checksums.txt \
+  site/official-app-release-source.json \
+  site/official-app-release-source.json.sha256 \
+  site/official-app-releases.json \
+  site/official-app-releases.json.sha256 \
   site/release.json \
+  site/release-data.mjs \
+  site/release-details.mjs \
   site/UPSTREAM.md \
   site/LICENSE \
   Sources/RabbisirCore/Resources/VendorRuntime/manifest.json \

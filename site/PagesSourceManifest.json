@@ -11,6 +11,26 @@
       "size": 367
     },
     {
+      "name": "official-app-release-source.json",
+      "sha256": "778f644dc346e0bccd04f40ca550e1f3dcf15fd8c27533dfcdaf0f51b2d6604e",
+      "size": 235
+    },
+    {
+      "name": "official-app-release-source.json.sha256",
+      "sha256": "25bc95f9c6e4457f739249783ac0b039e363c033451185bedb5cf142669b9871",
+      "size": 99
+    },
+    {
+      "name": "official-app-releases.json",
+      "sha256": "8c0b7269033de65981fa33842928ff814878494af71e18db46ae24926786b50c",
+      "size": 1872
+    },
+    {
+      "name": "official-app-releases.json.sha256",
+      "sha256": "6bcae4e80be3b969548db12cb4bad53fd9075f08cb3ec68194176aa374e4755a",
+      "size": 93
+    },
+    {
       "name": "release.json",
       "sha256": "9f17a11c086e45f48ce9f15c1bb01ea6f4a18baeef98d9c14f4eb3c1888bc239",
       "size": 1320
@@ -37,8 +57,8 @@
   "verification": {
     "downloadsSHA256": "c249ba284ef2460f1f0e6de64b41a02eaf9f7fca737f1501b762a8e0ba3d21a3",
     "governanceSHA256": "934d38fafaf3826171a3d8143919490dbcca5b1a0f8b4193ef8b99426c4e2928",
-    "pagesSHA256": "c51d050e953e05b722e796739ec4e679b6535915c13f55b26f30c0a61fafc626",
-    "publicRepositorySHA256": "e2df383d02950e7d4a39cd7a9faa91a45fd08e612bede8513a72553e5c2203f4"
+    "pagesSHA256": "a4fd1b330fdf1b6c8c6b020c4d0dce78a9bb9b3826720adcf102ce6a08e5692f",
+    "publicRepositorySHA256": "590bd28e147b37748310f63418229fd49b7d7462a6cbca9219260de4f74627a5"
   },
   "workflow": {
     "path": ".github/workflows/pages.yml",
