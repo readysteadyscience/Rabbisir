@@ -62,8 +62,11 @@ the commit and tree that produced the signed and notarized App artifacts; `websi
 records the clean commit and tree used to generate the Pages capsule plus its exact overlay-receipt
 digest. A website-tooling repair never relabels frozen App bytes as a new product build, and a frozen
 product manifest cannot be used with unreceipted or dirty website tooling.
-The integration projects `AppVersion.swift` directly from the frozen product Git commit and records
-its digest, so the successor runtime cannot be paired with an older public-base version projection.
+Release-time website generation starts from the exact reviewed public Git tree and preserves that
+tree's independent `AppVersion.swift` and runtime provenance byte for byte. It never accepts or copies
+the official App's VendorRuntime, AppVersion or private product-source files into the public Pages
+source. Product provenance remains a receipt binding only; website data, Appcast and the stable-DMG
+deployment record are the release-time projection.
 When a website-only tool repair follows already notarized artifacts,
 `prepare-frozen-pages-continuation.sh` is the only supported local continuation entrypoint. It
 revalidates the frozen preflight and artifact manifests plus their sidecars and exact ZIP, DMG and
@@ -100,6 +103,10 @@ Pages 清单 schema 4 分别记录 `productArtifactSource` 与 `websiteToolingSo
 生成已签名、公证 App 资产的 commit/tree，后者绑定生成官网胶囊的干净工具 commit/tree 与
 overlay receipt 摘要。官网工具修复不得把冻结 App 字节重称为新产品构建，未签收或脏的官网工具
 也不得与既有产品清单拼接发布。
+正式发布时的官网生成只从精确审查过的公开 Git tree 起步，并逐字节保留该 tree 独立的
+`AppVersion.swift` 与 runtime provenance；不得接收或复制正式 App 的 VendorRuntime、AppVersion
+或私有产品源码到公开 Pages source。产品 provenance 只保留在回执绑定中，发布时仅投影官网数据、
+Appcast 与稳定 DMG 部署记录。
 若官网工具修复发生在 App 资产已公证之后，只能使用
 `prepare-frozen-pages-continuation.sh` 做本地续接：重新校验冻结 preflight、ArtifactManifest、
 两份 sidecar 以及精确 ZIP、DMG、Appcast 字节，再生成新的 plan、PagesSource 与

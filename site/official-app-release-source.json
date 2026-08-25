@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "channel": "rabbisir-official-app",
-  "updatedAt": "2026-08-25T00:00:00Z",
-  "latest": "Rabbisir 0.1.2",
-  "contentReceiptSHA256": "b9744e0e061cab0df29f07891061fba03a2cbfa35d9ff507ac6a17c143ada77f"
+  "updatedAt": "2026-08-26T00:00:00Z",
+  "latest": "Rabbisir 0.1.3",
+  "contentReceiptSHA256": "eb287dcff46e3ac8ab4da1af5a816599a4fd855998343b680694895a6c58b92e"
 }

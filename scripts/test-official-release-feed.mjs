@@ -123,8 +123,16 @@ assert.equal(formattedReleaseDate("2026-08-20", "zh"), "2026年8月20日");
 assert.equal(cacheIsFresh(1_000, 1_000 + 599_999), true);
 assert.equal(cacheIsFresh(1_000, 1_000 + 600_000), false);
 
-const forwardFix = updatedFeed(feed, "26.15.1234", "2026-08-26", "fix");
-assert.equal(forwardFix.latest, "Rabbisir 26.15.1234");
+const forwardMajor = feed.releases.reduce((maximum, release) => {
+  const match = /^Rabbisir (\d+)\.\d+\.\d+/.exec(release.version);
+  assert.ok(match, "verified release versions must expose their SemVer major");
+  const major = BigInt(match[1]);
+  return major > maximum ? major : maximum;
+}, 0n) + 1n;
+const forwardVersion = `${forwardMajor}.0.0`;
+const forwardDate = feed.releases[0].publishedOn;
+const forwardFix = updatedFeed(feed, forwardVersion, forwardDate, "fix");
+assert.equal(forwardFix.latest, `Rabbisir ${forwardVersion}`);
 assert.deepEqual(forwardFix.releases[0].title, { en: "Fixes", zh: "修复" });
 assert.equal(forwardFix.releases[1].version, feed.releases[0].version);
 assert.throws(
@@ -137,11 +145,11 @@ assert.throws(
 );
 const conflictingVersion = clone(feed);
 conflictingVersion.releases.unshift({
-  ...releaseRecord("26.15.1234", "2026-08-26", "fix"),
+  ...releaseRecord(forwardVersion, forwardDate, "fix"),
   summary: { en: "Conflicting content", zh: "冲突内容" },
 });
 assert.throws(
-  () => updatedFeed(conflictingVersion, "26.15.1234", "2026-08-26", "fix"),
+  () => updatedFeed(conflictingVersion, forwardVersion, forwardDate, "fix"),
   /different content/
 );
 
