@@ -20,9 +20,20 @@ jobs:
       - name: Check out public source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - name: Verify Pages capsule
+      - name: Verify Pages source capsule
         env:
           RABBISIR_PUBLIC_SOURCE_EXPORT: "true"
+        run: |
+          node scripts/materialize-pages-assets.mjs verify-source site/PagesSourceManifest.json site
+          scripts/verify-pages-site.sh
+
+      - name: Materialize stable download from the frozen Release asset
+        run: node scripts/materialize-pages-assets.mjs materialize site/PagesSourceManifest.json site
+
+      - name: Verify deployable Pages capsule
+        env:
+          RABBISIR_PUBLIC_SOURCE_EXPORT: "true"
+          RABBISIR_PAGES_DEPLOY_ARTIFACT: "true"
         run: scripts/verify-pages-site.sh
 
       - name: Configure GitHub Pages

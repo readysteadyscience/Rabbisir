@@ -1,10 +1,10 @@
 {
   "schemaVersion": 3,
-  "upstreamVersion": "0.1.0-rc.5",
-  "rabbisirVersion": "0.1.0",
-  "upstreamCommit": "47f943859bef60e4160492346772ded9b24f765a",
-  "upstreamTree": "f904efab9ef435201d6ba4da88a34d6366568272",
-  "provenanceContractSHA256": "81335a2a536338f095f7c77beb4f54fc8fe02e69728e701cfb35af54754ed053",
-  "runtimeInventorySHA256": "1d13cdad0d1751f9a861caae704fd378e552c512fa32ef8a74a7295e23afa1ed",
+  "upstreamVersion": "0.1.1-rc.2",
+  "rabbisirVersion": "0.1.2",
+  "upstreamCommit": "b150a551b8d465e31e418e1b2eaf5e79bbb7d28e",
+  "upstreamTree": "53915efe4e2126cc7779b73dfc8a3bcec5318c44",
+  "provenanceContractSHA256": "e09f2280db93563981731e0abf5a8e55eebd204613dd7b9de8d5b1291adffe5f",
+  "runtimeInventorySHA256": "5c8b4e6d4d52057a1abbb43ddc982d20896486b41ca17aafb730607ca8c51e56",
   "executable": "bin/rabbisir-runtime"
 }

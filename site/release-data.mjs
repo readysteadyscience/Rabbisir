@@ -26,17 +26,28 @@ function requireLocalized(value, label, maximumLength) {
 }
 
 function versionParts(version) {
-  const match = /^Rabbisir (\d+)\.(\d+)\.(\d+) · r(\d+)\.(\d{2})$/.exec(version);
+  const number = "(0|[1-9]\\d*)";
+  const match = new RegExp(`^Rabbisir ${number}\\.${number}\\.${number}(?: · r${number}\\.(\\d{2}))?$`).exec(version);
   if (!match) return null;
-  return match.slice(1).map(Number);
+  return {
+    legacyRevision: match[4] === undefined ? null : [BigInt(match[4]), BigInt(match[5])],
+    semanticVersion: match.slice(1, 4).map(BigInt),
+  };
 }
 
 function compareVersionDescending(left, right) {
   const leftParts = versionParts(left);
   const rightParts = versionParts(right);
   if (!leftParts || !rightParts) return 0;
-  for (let index = 0; index < leftParts.length; index += 1) {
-    if (leftParts[index] !== rightParts[index]) return rightParts[index] - leftParts[index];
+  for (let index = 0; index < leftParts.semanticVersion.length; index += 1) {
+    if (rightParts.semanticVersion[index] > leftParts.semanticVersion[index]) return 1;
+    if (rightParts.semanticVersion[index] < leftParts.semanticVersion[index]) return -1;
+  }
+  const leftRevision = leftParts.legacyRevision ?? [-1n, -1n];
+  const rightRevision = rightParts.legacyRevision ?? [-1n, -1n];
+  for (let index = 0; index < leftRevision.length; index += 1) {
+    if (rightRevision[index] > leftRevision[index]) return 1;
+    if (rightRevision[index] < leftRevision[index]) return -1;
   }
   return 0;
 }
@@ -93,7 +104,8 @@ export function validateOfficialReleaseFeed(value) {
     previousDate = release.publishedOn;
     previousVersion = release.version;
   }
-  if (typeof value.latest !== "string" || value.latest !== value.releases[0].version) {
+  const latestParts = typeof value.latest === "string" ? versionParts(value.latest) : null;
+  if (!latestParts || latestParts.legacyRevision !== null || value.latest !== value.releases[0].version) {
     throw new Error("latest must identify the first official release");
   }
   return value;

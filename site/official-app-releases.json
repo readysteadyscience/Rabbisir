@@ -1,13 +1,31 @@
 {
   "schemaVersion": 1,
   "updatedAt": "2026-08-25T00:00:00Z",
-  "latest": "Rabbisir 0.1.1 · r1.02",
-  "contentReceiptSHA256": "6e42562cbefbddc9878476228a1f8fe9a9cbf4d81627deedd7ba6cf229c1de9d",
+  "latest": "Rabbisir 0.1.2",
+  "contentReceiptSHA256": "b9744e0e061cab0df29f07891061fba03a2cbfa35d9ff507ac6a17c143ada77f",
   "source": {
     "channel": "rabbisir-official-app",
     "receipt": "official-app-release-source.json"
   },
   "releases": [
+    {
+      "version": "Rabbisir 0.1.2",
+      "publishedOn": "2026-08-25",
+      "title": {
+        "en": "Fixes",
+        "zh": "修复"
+      },
+      "summary": {
+        "en": "This release contains verified fixes for a more reliable everyday experience.",
+        "zh": "本次版本包含已验证的修复，提升日常使用可靠性。"
+      },
+      "highlights": [
+        {
+          "en": "Resolves verified issues from the previous version.",
+          "zh": "修复上一版本中已确认的问题。"
+        }
+      ]
+    },
     {
       "version": "Rabbisir 0.1.1 · r1.02",
       "publishedOn": "2026-08-25",

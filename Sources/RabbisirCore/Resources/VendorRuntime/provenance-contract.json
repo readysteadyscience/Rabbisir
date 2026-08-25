@@ -2,22 +2,34 @@
   "schemaVersion": 3,
   "manifest": {
     "schemaVersion": 3,
-    "rabbisirVersion": "0.1.0"
+    "rabbisirVersion": "0.1.2"
   },
   "upstream": {
     "repository": "https://github.com/deepseek-ai/deepseek-harness.git",
-    "commit": "47f943859bef60e4160492346772ded9b24f765a",
-    "tree": "f904efab9ef435201d6ba4da88a34d6366568272",
-    "version": "0.1.0-rc.5"
+    "commit": "b150a551b8d465e31e418e1b2eaf5e79bbb7d28e",
+    "tree": "53915efe4e2126cc7779b73dfc8a3bcec5318c44",
+    "version": "0.1.1-rc.2"
   },
   "patches": [
     {
       "path": "RuntimeProvenance/rabbisir-runtime.patch",
-      "sha256": "535515777513a6c42e645b7554b5f7a36f1c015b76f1f54eb3d7581204e486dc"
+      "sha256": "a498a9cf8fb74f7c615c061fe68d1a69fd2b7abec48071348e7f391e89395261"
     },
     {
       "path": "RuntimeProvenance/deterministic-css-modules.patch",
       "sha256": "eb504cde4929c3890fadbbb5aff9ddff02b692137a5cc7b338543d6710234465"
+    },
+    {
+      "path": "RuntimeProvenance/rabbisir-rc2-files-policy.patch",
+      "sha256": "7776c9890dd8a9c5719ff9b9944c030a2b9223886bf57b3de8c57e9f34a134aa"
+    },
+    {
+      "path": "RuntimeProvenance/rabbisir-rc2-web-fetch-policy.patch",
+      "sha256": "1ebe08ef0699d50fd598e9ff189cd1259ffe1cd68cd82f23f2a310a6f8e3a6c5"
+    },
+    {
+      "path": "RuntimeProvenance/rabbisir-response-language-policy.patch",
+      "sha256": "55dd2810320f165099fd01d614f9eec95ada50e60cbe53ff9575510a1dc3adc7"
     }
   ],
   "toolchain": {
@@ -32,11 +44,11 @@
     "packageManagerExecutable": "package/bin/pnpm.cjs"
   },
   "build": {
-    "upstreamLockSHA256": "6177ec61bdb8194eb5a606813a62ffb0ab2cc7fdfe2cd6e0249dcbfe4bce58e0",
-    "derivedInjectedLockSHA256": "b20cc508f444c25929230ceef9128e0b03af336c839502b5edf74061fc9a7d88",
+    "upstreamLockSHA256": "6f20c268e76df1294c16f016ab10a7fa1271608b4db0f4fafe8f7c21ec90013e",
+    "derivedInjectedLockSHA256": "9d3c005c8e97e899d0f016240e983f2dc59f217ef3a06f80284d4ba44b61f46b",
     "workspaceInjection": true,
     "nodeLinker": "hoisted",
-    "sequentialClientBundles": 39,
+    "sequentialClientBundles": 43,
     "runtimeSupplement": "vendor/group",
     "requiredWorkspacePeerSupplements": 14,
     "fullLibraryOverlays": [
@@ -53,12 +65,12 @@
   },
   "output": {
     "algorithm": "sha256(canonical-path-mode-content-v1)",
-    "digest": "1d13cdad0d1751f9a861caae704fd378e552c512fa32ef8a74a7295e23afa1ed",
-    "fileCount": 31738,
-    "symlinkCount": 12,
+    "digest": "5c8b4e6d4d52057a1abbb43ddc982d20896486b41ca17aafb730607ca8c51e56",
+    "fileCount": 28271,
+    "symlinkCount": 13,
     "nativeProjection": {
       "path": "node/node_modules/@deepseek-ai/dsh-client-ui-conversation/lib/types/client/native-projection.js",
-      "sha256": "1677d08c98233f54e29e3342b811ea4e0a533f6c99eb859887cd89e262559311"
+      "sha256": "447915343b877896f090b142bd371bb4b8cd4bb50601a282e3d8b5696884be1f"
     }
   }
 }

@@ -67,9 +67,9 @@ public enum RabbisirLaunchIdentity: Sendable {
 }
 
 public enum RabbisirVersion {
-  public static let upstreamCompatibleVersion = "0.1.0-rc.5"
-  public static let upstreamCompatibleCommit = "47f943859bef60e4160492346772ded9b24f765a"
-  public static let displayVersion = "0.1.0"
-  public static let appleShortVersion = "0.1.0"
-  public static let appleBuildVersion = "1"
+  public static let upstreamCompatibleVersion = "0.1.1-rc.2"
+  public static let upstreamCompatibleCommit = "b150a551b8d465e31e418e1b2eaf5e79bbb7d28e"
+  public static let displayVersion = "v0.1.2"
+  public static let appleShortVersion = "0.1.2"
+  public static let appleBuildVersion = "4"
 }

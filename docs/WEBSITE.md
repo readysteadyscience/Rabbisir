@@ -57,10 +57,29 @@ republishes the previous accepted feed, source receipt and both sidecars without
 The browser keeps a validated feed for ten minutes; after expiry it revalidates once and continues to
 show a valid saved feed when the data request fails.
 
+Pages manifest schema 4 records two independent provenance bindings. `productArtifactSource` remains
+the commit and tree that produced the signed and notarized App artifacts; `websiteToolingSource`
+records the clean commit and tree used to generate the Pages capsule plus its exact overlay-receipt
+digest. A website-tooling repair never relabels frozen App bytes as a new product build, and a frozen
+product manifest cannot be used with unreceipted or dirty website tooling.
+The integration projects `AppVersion.swift` directly from the frozen product Git commit and records
+its digest, so the successor runtime cannot be paired with an older public-base version projection.
+When a website-only tool repair follows already notarized artifacts,
+`prepare-frozen-pages-continuation.sh` is the only supported local continuation entrypoint. It
+revalidates the frozen preflight and artifact manifests plus their sidecars and exact ZIP, DMG and
+Appcast bytes, then produces a new delivery plan, Pages source and
+`WebsiteDeliveryContinuationReceipt.json` without signing, notarization, GitHub writes or Pages
+deployment. The migrated product-artifact envelope keeps its canonical payload digest internally;
+its `.sha256` sidecar covers the exact serialized file, and the continuation receipt records both.
+
 ## Direct download continuity
 
-The homepage primary action continues to use the permanent GitHub path
-`releases/latest/download/Rabbisir.dmg`, so this page change does not alter the installer target.
+The homepage primary action uses the permanent Pages URL
+`https://readysteadyscience.github.io/Rabbisir/Rabbisir.dmg`. The authorized release transaction
+records the reviewed versioned Release DMG URL, size and SHA-256 in the Pages source manifest. The
+DMG never enters Git history: after the Release asset has passed public readback, the explicit Pages
+workflow downloads it anonymously, verifies the frozen record, and materializes the same-origin
+stable filename only inside the temporary deployment artifact.
 Versioned filenames, sizes, SHA-256 values, the canonical Release link and installation-acceptance
 status remain in [`site/DOWNLOADS.md`](../site/DOWNLOADS.md). `Rabbisir Open` contributor builds are
 not official downloadable Apps. Appcast, Release assets and update behavior remain unchanged.
@@ -77,8 +96,22 @@ Rabbisir 标识、创作者头像和微信联系二维码均遵守上文列出�
 任何凭据。正式 App 发布事务以完整替换方式生成并校验 feed、来源回执与各自摘要侧车，将四个
 文件纳入 Pages 清单原子发布，并分别回读 App 发布与官网数据发布结果；官网更新失败不得伪装
 为 App 发布成功。页面使用十分钟本地缓存，网络失败时优先显示已校验的旧数据，不会白屏。
+Pages 清单 schema 4 分别记录 `productArtifactSource` 与 `websiteToolingSource`：前者始终绑定实际
+生成已签名、公证 App 资产的 commit/tree，后者绑定生成官网胶囊的干净工具 commit/tree 与
+overlay receipt 摘要。官网工具修复不得把冻结 App 字节重称为新产品构建，未签收或脏的官网工具
+也不得与既有产品清单拼接发布。
+若官网工具修复发生在 App 资产已公证之后，只能使用
+`prepare-frozen-pages-continuation.sh` 做本地续接：重新校验冻结 preflight、ArtifactManifest、
+两份 sidecar 以及精确 ZIP、DMG、Appcast 字节，再生成新的 plan、PagesSource 与
+`WebsiteDeliveryContinuationReceipt.json`；该入口不签名、不公证、不写 GitHub，也不部署 Pages。
+迁移后的产品产物 envelope 在内部保留规范 payload 摘要，`.sha256` sidecar 覆盖精确序列化文件，
+续接回执同时记录两者。
 
-首页主要下载操作继续固定使用 `releases/latest/download/Rabbisir.dmg`，因此版本页改造不改变
-安装包目标。版本化文件名、大小、SHA-256、正式 Release 链接和安装验收状态继续保留在
+首页主要下载操作固定使用
+`https://readysteadyscience.github.io/Rabbisir/Rabbisir.dmg`。获授权的发布事务会把已审查的
+版本化 Release DMG 的公开 URL、大小与 SHA-256 绑定到 Pages 来源清单；DMG 不进入 Git 历史。
+Release 资产完成公开回读后，显式 Pages 工作流匿名下载并校验冻结记录，只在临时部署 artifact
+中生成这个同源稳定文件名。
+版本化文件名、大小、SHA-256、正式 Release 链接和安装验收状态继续保留在
 [`site/DOWNLOADS.md`](../site/DOWNLOADS.md)；Appcast、Release 资产与自动更新行为均不改变。
 本地 `Rabbisir Open` 构建不是官方安装包。

@@ -22,7 +22,7 @@ actual_top_level="$(
   || fail "top-level allowlist differs from the reviewed public source shape"
 
 for forbidden_path in \
-  .git .rabbisir-private .build dist \
+  .git .rabbisir-private .rabbisir-local .codex .agents .build dist \
   Sources/RabbisirApp Sources/RabbisirDEVApp \
   scripts/build-and-run.sh scripts/build-and-run-dev.sh \
   scripts/build-and-run-production.sh scripts/verify-official-overlay.sh
@@ -36,7 +36,9 @@ if /usr/bin/find "$public_root" -type l -print | /usr/bin/grep -q .; then
 fi
 if /usr/bin/find "$public_root" -type f \
   \( -name '*.app' -o -name '*.dmg' -o -name '*.zip' -o -name '*.xcarchive' \
-    -o -name '*.pkg' -o -name '*.p12' -o -name '*.provisionprofile' \) \
+    -o -name '*.pkg' -o -name '*.p12' -o -name '*.pem' -o -name '*.key' \
+    -o -name '*.cer' -o -name '*.mobileprovision' -o -name '*.provisionprofile' \
+    -o -name '*.dSYM' \) \
   -print | /usr/bin/grep -q .
 then
   fail "a built App, distribution archive, or identity material remains"
@@ -79,19 +81,14 @@ file_list="$(/usr/bin/mktemp "${TMPDIR:-/tmp}/rabbisir-public-export-files.XXXXX
 trap '/bin/rm -f "$file_list"' EXIT HUP INT TERM
 /usr/bin/find "$public_root" -type f \
   ! -path "$public_root/RuntimeProvenance/rabbisir-runtime.patch" -print0 >"$file_list"
-private_material_pattern='BEGIN (RSA |EC |OPENSSH )?PRIVATE KE''Y|Developer ID App''lication:|Apple Team I''D|RabbisirCandidate''Fingerprint|Overlay''Receipt|/Use''rs/[^/ ]+|/private/tm''p/'
-if xargs -0 rg -n "$private_material_pattern" <"$file_list"; then
+private_material_pattern='BEGIN (RSA |EC |OPENSSH )?PRIVATE KE''Y|Developer ID App''lication:|Apple Team I''D|RabbisirCandidate''Fingerprint|Overlay''Receipt|/Use''rs/(?!example/)[[:alnum:]_.-]+/'
+if xargs -0 rg -n -P "$private_material_pattern" <"$file_list"; then
   fail "private identity, candidate, or local-path material remains"
 fi
 
-framework_name='Spar''kle'
-private_surface_pattern='OpenSource''Maintenance|Support''OpenSource|Rabbisir''Support|Appearance''PlaceholderMenu|Appearance''SettingsView|settings''Appearance|RabbisirSoftware''Update|Software''UpdateIndicator|checkFor''Updates|S''UFeedURL|S''UPublicEDKey'
-if /usr/bin/find "$public_root" -type f \
-  ! -path "$public_root/RuntimeProvenance/rabbisir-runtime.patch" \
-  ! -path "$public_root/site/appcast.xml" \
-  ! -path "$public_root/scripts/verify-pages-site.sh" -print0 \
-  | xargs -0 rg -n "$framework_name|$private_surface_pattern"; then
-  fail "official-only update or product surface remains"
+proprietary_format_pattern='Rabbisir''MC|rabbisir''mc|Memory''Capsule|ProjectMemory''Capsule|记忆''胶囊'
+if xargs -0 rg -n -i "$proprietary_format_pattern" <"$file_list"; then
+  fail "excluded proprietary format or feature information remains"
 fi
 
 cd "$public_root"

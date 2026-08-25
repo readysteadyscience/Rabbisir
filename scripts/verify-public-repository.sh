@@ -31,6 +31,8 @@ for required in \
   scripts/verify-public-dependency-lock.mjs \
   scripts/verify-public-export.sh \
   scripts/test-official-release-feed.mjs \
+  scripts/materialize-pages-assets.mjs \
+  scripts/update-official-release-feed.mjs \
   scripts/verify-official-release-feed.mjs \
   scripts/verify-pages-site.sh \
   scripts/rebuild-vendor-runtime.sh \

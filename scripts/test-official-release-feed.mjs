@@ -13,6 +13,7 @@ import {
   verifyFeedFile,
   verifySourceReceipt,
 } from "./verify-official-release-feed.mjs";
+import { releaseRecord, updatedFeed } from "./update-official-release-feed.mjs";
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const feedPath = path.join(repositoryRoot, "site/official-app-releases.json");
@@ -115,10 +116,34 @@ function controllerFor({ documentObject, fetchFunction, storage, now = () => 1_0
 verifyFeedFile(feedPath);
 assert.equal(validateOfficialReleaseFeed(feed), feed);
 assert.equal(verifySourceReceipt(feed, sourceReceipt), sourceReceipt);
+assert.match(feed.latest, /^Rabbisir \d+\.\d+\.\d+$/);
+assert.equal(feed.releases.some((release) => / · r\d+\.\d{2}$/.test(release.version)), true);
 assert.equal(formattedReleaseDate("2026-08-20", "en"), "August 20, 2026");
 assert.equal(formattedReleaseDate("2026-08-20", "zh"), "2026年8月20日");
 assert.equal(cacheIsFresh(1_000, 1_000 + 599_999), true);
 assert.equal(cacheIsFresh(1_000, 1_000 + 600_000), false);
+
+const forwardFix = updatedFeed(feed, "26.15.1234", "2026-08-26", "fix");
+assert.equal(forwardFix.latest, "Rabbisir 26.15.1234");
+assert.deepEqual(forwardFix.releases[0].title, { en: "Fixes", zh: "修复" });
+assert.equal(forwardFix.releases[1].version, feed.releases[0].version);
+assert.throws(
+  () => releaseRecord("0.1.2-r1.03", "2026-08-25", "fix"),
+  /canonical three-part SemVer/
+);
+assert.throws(
+  () => releaseRecord("0.1.2", "2026-02-30", "fix"),
+  /real YYYY-MM-DD/
+);
+const conflictingVersion = clone(feed);
+conflictingVersion.releases.unshift({
+  ...releaseRecord("26.15.1234", "2026-08-26", "fix"),
+  summary: { en: "Conflicting content", zh: "冲突内容" },
+});
+assert.throws(
+  () => updatedFeed(conflictingVersion, "26.15.1234", "2026-08-26", "fix"),
+  /different content/
+);
 
 const mismatchedLatest = resign(clone(feed));
 mismatchedLatest.latest = mismatchedLatest.releases[1].version;
@@ -133,6 +158,28 @@ reversed.releases.reverse();
 reversed.latest = reversed.releases[0].version;
 reversed.contentReceiptSHA256 = contentReceipt(reversed);
 assert.throws(() => verifyFeed(reversed), /newest first/);
+
+const legacySuccessor = resign(clone(feed));
+legacySuccessor.releases[0].version = "Rabbisir 0.1.2 · r1.03";
+legacySuccessor.latest = legacySuccessor.releases[0].version;
+legacySuccessor.contentReceiptSHA256 = contentReceipt(legacySuccessor);
+assert.throws(() => validateOfficialReleaseFeed(legacySuccessor), /latest/);
+
+const unboundedOutOfOrder = resign(clone(feed));
+unboundedOutOfOrder.releases = [
+  releaseRecord("9007199254740992.0.0", "2026-08-25", "fix"),
+  releaseRecord("9007199254740993.0.0", "2026-08-25", "fix"),
+  ...unboundedOutOfOrder.releases.slice(1),
+];
+unboundedOutOfOrder.latest = unboundedOutOfOrder.releases[0].version;
+unboundedOutOfOrder.contentReceiptSHA256 = contentReceipt(unboundedOutOfOrder);
+assert.throws(() => verifyFeed(unboundedOutOfOrder), /same-day official releases/);
+
+const nonCanonicalSemver = resign(clone(feed));
+nonCanonicalSemver.releases[0].version = "Rabbisir 0.01.2";
+nonCanonicalSemver.latest = nonCanonicalSemver.releases[0].version;
+nonCanonicalSemver.contentReceiptSHA256 = contentReceipt(nonCanonicalSemver);
+assert.throws(() => verifyFeed(nonCanonicalSemver), /shape or version/);
 
 const internalDetail = resign(clone(feed));
 internalDetail.releases[0].highlights[0].en = "Updated scripts/release.sh and its release gate.";
