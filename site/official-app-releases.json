@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
   "updatedAt": "2026-08-26T00:00:00Z",
-  "latest": "Rabbisir 0.1.3",
-  "contentReceiptSHA256": "eb287dcff46e3ac8ab4da1af5a816599a4fd855998343b680694895a6c58b92e",
+  "latest": "Rabbisir 0.1.4",
+  "contentReceiptSHA256": "ceec900de20b13dd030facace444a2b15a08a5bd0a555fe8674a9295872bc437",
   "source": {
     "channel": "rabbisir-official-app",
     "receipt": "official-app-release-source.json"
   },
   "releases": [
     {
-      "version": "Rabbisir 0.1.3",
+      "version": "Rabbisir 0.1.4",
       "publishedOn": "2026-08-26",
       "title": {
         "en": "Fixes",

@@ -648,8 +648,8 @@ if (runtimeReceiptIsPresent) {
 }
 if (isPublicSourceExport === runtimeReceiptIsPresent ||
     !exact(manifest, ["deploymentAssets", "files", "provenance", "publicAppcastURL", "publicBase", "releaseTag", "runtime", "schemaVersion", "verification", "workflow"]) ||
-    manifest.schemaVersion !== 4 || manifest.publicBase.commit !== "ca3758d29df1061981beb2535bfad02643929ba5" ||
-    manifest.publicBase.tree !== "8d0b3155395aa597489067529d91edc0cd40f366" || manifest.releaseTag !== "v0.1.3" ||
+    manifest.schemaVersion !== 4 || manifest.publicBase.commit !== "bf0cc8f6343f14498f12932c2ea10fe724b67827" ||
+    manifest.publicBase.tree !== "7fbab71f9528ad540e6fcea7621409d7f21d8739" || manifest.releaseTag !== "v0.1.4" ||
     JSON.stringify(manifest.provenance) !== "{\"productArtifactSource\":{\"commit\":\"afc1003370c0d318179b6f640babbe2afcb96462\",\"tree\":\"dcf40a085bd21b99aab965908bb7e1da3154e2b1\"},\"websiteToolingSource\":{\"commit\":\"0f3cb4e08b5c20bbdd8154c9bca921f854f1d70f\",\"overlayReceiptSHA256\":\"01aebf40f33be9bf4f41ea52a77fabf0dd03dbaf79d9e4f80e9c33dc48efae51\",\"tree\":\"b40f2ce4bc77c3a039df7571eb59ffaa93cb22e9\"}}" ||
     manifest.publicAppcastURL !== "https://readysteadyscience.github.io/Rabbisir/appcast.xml" || manifest.workflow.path !== ".github/workflows/pages.yml" ||
     manifest.workflow.ref !== "refs/heads/main" || manifest.workflow.sha256 !== sha(path.join(root, manifest.workflow.path)) ||
@@ -672,16 +672,16 @@ const deploymentAsset = manifest.deploymentAssets?.[0];
 if (!Array.isArray(manifest.deploymentAssets) || manifest.deploymentAssets.length !== 1 ||
     !exact(deploymentAsset, ["name", "sha256", "size", "sourceURL"]) ||
     deploymentAsset.name !== "Rabbisir.dmg" ||
-    deploymentAsset.sourceURL !== "https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.3/Rabbisir-0.1.3-5.dmg" ||
-    deploymentAsset.sha256 !== "eda5df6a8b63695c22e361a7a4968b02857793d2e04d8534274f954338a055ac" ||
-    deploymentAsset.size !== 96167514)
+    deploymentAsset.sourceURL !== "https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.4/Rabbisir-0.1.4-6.dmg" ||
+    deploymentAsset.sha256 !== "866917485b24a217c56d63b0419a11e2c731149f39c4ece773202730ade0761e" ||
+    deploymentAsset.size !== 96167229)
   fail("generated Pages deployment asset differs from the frozen versioned DMG");
 for (const entry of manifest.files) {
   const file = path.join(root, "site", entry.name);
   if (sha(file) !== entry.sha256 || fs.statSync(file).size !== entry.size)
     fail("a generated Pages file differs from its manifest");
 }
-const expectedOfficialVersion = "Rabbisir 0.1.3";
+const expectedOfficialVersion = "Rabbisir 0.1.4";
 const expectedReleaseTitles = {
   feature: { en: "Feature update", zh: "功能更新" },
   fix: { en: "Fixes", zh: "修复" },
@@ -696,17 +696,17 @@ if (officialFeed.latest !== expectedOfficialVersion ||
     officialSourceReceipt.contentReceiptSHA256 !== officialFeed.contentReceiptSHA256)
   fail("official App release feed differs from the frozen ReleaseIdentity and date");
 if (!exact(release, ["assets", "build", "displayVersion", "releaseType", "releaseURL", "schemaVersion", "stableDownloadURL", "tag", "version"]) ||
-    release.schemaVersion !== 1 || release.version !== "0.1.3" ||
-    release.build !== "5" ||
-    release.displayVersion !== "v0.1.3" ||
-    release.tag !== "v0.1.3" ||
-    release.releaseURL !== "https://github.com/readysteadyscience/Rabbisir/releases/tag/v0.1.3" ||
+    release.schemaVersion !== 1 || release.version !== "0.1.4" ||
+    release.build !== "6" ||
+    release.displayVersion !== "v0.1.4" ||
+    release.tag !== "v0.1.4" ||
+    release.releaseURL !== "https://github.com/readysteadyscience/Rabbisir/releases/tag/v0.1.4" ||
     release.releaseType !== "fix" ||
     release.stableDownloadURL !== "https://readysteadyscience.github.io/Rabbisir/Rabbisir.dmg" ||
-    JSON.stringify(release.assets) !== "[{\"name\":\"Rabbisir-0.1.3-5.zip\",\"sha256\":\"5e017887734bd86913bb8e4b343f5b918a6f263e0bf21054ea633f33aca736b6\",\"size\":133310298,\"url\":\"https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.3/Rabbisir-0.1.3-5.zip\"},{\"name\":\"Rabbisir-0.1.3-5.dmg\",\"sha256\":\"eda5df6a8b63695c22e361a7a4968b02857793d2e04d8534274f954338a055ac\",\"size\":96167514,\"url\":\"https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.3/Rabbisir-0.1.3-5.dmg\"},{\"name\":\"PublicReleaseManifest.json\",\"sha256\":\"9b8574563c237f80ebe534d74c138f48e3d3019448f2067025a64994de59dc0d\",\"size\":1219,\"url\":\"https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.3/PublicReleaseManifest.json\"},{\"name\":\"PublicReleaseManifest.json.sha256\",\"sha256\":\"7e9ec7e5730dc59280dc48f61b5f44ec0e6ffc2e41ff07f299951ed6fd147040\",\"size\":93,\"url\":\"https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.3/PublicReleaseManifest.json.sha256\"}]")
+    JSON.stringify(release.assets) !== "[{\"name\":\"Rabbisir-0.1.4-6.zip\",\"sha256\":\"ee8f4dacc741da9c3f63edeecb4e0e13d0f0cc2d6322b214d21ec1a1398747b4\",\"size\":133310314,\"url\":\"https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.4/Rabbisir-0.1.4-6.zip\"},{\"name\":\"Rabbisir-0.1.4-6.dmg\",\"sha256\":\"866917485b24a217c56d63b0419a11e2c731149f39c4ece773202730ade0761e\",\"size\":96167229,\"url\":\"https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.4/Rabbisir-0.1.4-6.dmg\"},{\"name\":\"PublicReleaseManifest.json\",\"sha256\":\"f77d622073a1974087a7b22716213cbb25e7bc0ff05bbbdfd3178346e2842543\",\"size\":1219,\"url\":\"https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.4/PublicReleaseManifest.json\"},{\"name\":\"PublicReleaseManifest.json.sha256\",\"sha256\":\"5698864d87c6a78ceea6093fdb840b849dce197bdbb7d30658663c838fc6496d\",\"size\":93,\"url\":\"https://github.com/readysteadyscience/Rabbisir/releases/download/v0.1.4/PublicReleaseManifest.json.sha256\"}]")
   fail("release metadata differs from the frozen plan");
 const checksumLines = fs.readFileSync(path.join(root, "site/checksums.txt"), "utf8").trim().split("\n").sort();
-const releaseDiskImage = release.assets.find((asset) => asset.name === "Rabbisir-0.1.3-5.dmg");
+const releaseDiskImage = release.assets.find((asset) => asset.name === "Rabbisir-0.1.4-6.dmg");
 const stableDiskImage = path.join(root, "site/Rabbisir.dmg");
 if (!releaseDiskImage || fs.existsSync(stableDiskImage) !== deployArtifact)
   fail("stable disk image presence differs from source or deployment-capsule mode");
@@ -741,14 +741,14 @@ const hasExactSparkleMetadata = (name, expected) => {
   return values.length > 0 && values.every((value) => value === expected);
 };
 if (!archive || !appcast.includes("production") || !appcast.includes(archive.url) ||
-    !hasExactSparkleMetadata("shortVersionString", "0.1.3") ||
-    !hasExactSparkleMetadata("version", "5"))
+    !hasExactSparkleMetadata("shortVersionString", "0.1.4") ||
+    !hasExactSparkleMetadata("version", "6"))
   fail("Appcast semantics differ from the frozen production Release");
 const downloads = fs.readFileSync(path.join(root, "site/DOWNLOADS.md"), "utf8");
 if (/No official Rabbisir installation asset is available|目前尚无可用的 Rabbisir 官方安装包/.test(downloads) ||
     !downloads.includes(release.releaseURL) || !downloads.includes(release.stableDownloadURL) ||
     !downloads.includes(releaseDiskImage.sha256) || !downloads.includes(String(releaseDiskImage.size)) ||
-    !release.assets.filter((asset) => asset.name === "Rabbisir-0.1.3-5.zip")
+    !release.assets.filter((asset) => asset.name === "Rabbisir-0.1.4-6.zip")
       .every((asset) => downloads.includes(asset.url) && downloads.includes(asset.sha256) && downloads.includes(String(asset.size))) ||
     !downloads.includes("Official installation acceptance is not yet complete") || !downloads.includes("正式安装验收尚未完成"))
   fail("download status does not describe the frozen assets and pending installation acceptance");
