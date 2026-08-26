@@ -1,7 +1,8 @@
 # Public contribution workflow
 
-This repository is the public source for `Rabbisir Open`. The workflow below covers contributions to
-that source; it does not document or contain the operator process used to publish the official App.
+This repository is the public source for `Rabbisir Open`, its community material, and the reviewed
+website. The workflow below covers contributions to those public surfaces; it does not document or
+contain the operator process used to publish the official App.
 
 ## Default order
 
@@ -25,5 +26,19 @@ runtime-provenance inputs, and public build verification. It excludes generated 
 credentials, user data, personal paths, unpublished material, and official distribution
 implementation or configuration.
 
-Official downloads are published through the project's website and GitHub Releases. A local
-`Rabbisir Open` build is a contributor build and must not be represented as the official App.
+Official downloads are published through the separate
+[`readysteadyscience/Rabbisir-Releases`](https://github.com/readysteadyscience/Rabbisir-Releases).
+The stable official installer is
+<https://github.com/readysteadyscience/Rabbisir-Releases/releases/latest/download/Rabbisir.dmg>.
+A local `Rabbisir Open` build is a contributor build and must not be represented as the official App.
+
+## Open milestone boundary
+
+Public-source milestones are separate, explicitly authorized events. Their tags use `open-vX.Y.Z`.
+Any Open-specific Release must remain clearly labeled as Open and cannot publish `Rabbisir.dmg`, an
+official App `vX.Y.Z` tag, official Appcast, or official manifests/checksums. Historical official-style
+tags already present here remain immutable compatibility records and are not reused for new delivery.
+
+Run `scripts/test-public-delivery-boundary.sh` before proposing any delivery automation or repository
+role change. The complete contributor-safe contract is in
+[`PUBLIC_SOURCE_POLICY.md`](PUBLIC_SOURCE_POLICY.md).

@@ -77,9 +77,12 @@ bundle ID is `com.rabbisir.desktop.open`, its display name is `Rabbisir Open`, i
 component is `Rabbisir Open/Runtime`, and its complete acceptance home remains below the temporary
 directory. The App bundle and isolated preferences/runtime data are removed when the helper exits.
 
-The public repository has no official distribution entrypoint. Published official downloads are
-available from the links in [`../site/DOWNLOADS.md`](../site/DOWNLOADS.md); contributor builds remain
-local `Rabbisir Open` builds.
+The public repository has no official distribution entrypoint. Published official downloads use the
+permanent
+[`Rabbisir-Releases` latest DMG](https://github.com/readysteadyscience/Rabbisir-Releases/releases/latest/download/Rabbisir.dmg);
+contributor builds remain local `Rabbisir Open` builds. The tracked `site/DOWNLOADS.md` file is a
+historical website migration snapshot, not the current download authority. See
+[`PUBLIC_SOURCE_POLICY.md`](PUBLIC_SOURCE_POLICY.md) for the repository role boundary.
 
 ## Upstream compatibility work
 

@@ -15,4 +15,16 @@ Rabbisir 是基于 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-ha
 
 Rabbisir 是独立、非官方的第三方项目，与 DeepSeek 不存在隶属、赞助或背书关系。
 
-参见[开发文档](docs/DEVELOPMENT.md)、[贡献指南](CONTRIBUTING.md)与[上游归属及兼容记录](Legal/README.md)。
+## 正式 Rabbisir 与 Rabbisir Open
+
+- **正式 Rabbisir App** — 请从独立的[正式发行仓库](https://github.com/readysteadyscience/Rabbisir-Releases)
+  获取当前签名并公证的安装包，或[直接下载最新 DMG](https://github.com/readysteadyscience/Rabbisir-Releases/releases/latest/download/Rabbisir.dmg)。
+- **Rabbisir Open** — 本仓库承载公开源码、贡献者构建、社区资料与官网。其本地未签名
+  `Rabbisir Open` 使用独立身份，不是对外发行的正式 App。
+
+Open 公开里程碑统一使用 `open-vX.Y.Z` Tag。本仓库历史中已经存在的正式版样式 Tag 与 Release
+作为不可改写的兼容记录保留；今后的正式 App 版本与资产只在
+`readysteadyscience/Rabbisir-Releases` 发布。
+
+参见[公开源码政策](docs/PUBLIC_SOURCE_POLICY.md)、[开发文档](docs/DEVELOPMENT.md)、
+[贡献指南](CONTRIBUTING.md)与[上游归属及兼容记录](Legal/README.md)。

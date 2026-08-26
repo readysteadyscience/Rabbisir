@@ -6,6 +6,9 @@ runtime is an App-owned compatibility component, not a second product surface.
 - Preserve unrelated working-tree changes and keep contributions scoped to the public source tree.
 - Use a branch and pull request for contributions. Do not push to protected branches, change
   repository settings, or publish an official distribution from a contributor checkout.
+- This repository owns `Rabbisir Open` source, community material, and the reviewed website. Official
+  Rabbisir App tags, Releases, installers, Appcast, manifests, and checksums belong only to
+  `readysteadyscience/Rabbisir-Releases`; Open milestones use `open-vX.Y.Z` tags.
 - Public builds use only the `RabbisirOpen` product. Run
   `scripts/build-and-run-open.sh --verify-first-run` for an unsigned, isolated, temporary App
   acceptance build. Do not commit generated App packages, DMGs, ZIPs, or runtime payloads.
@@ -21,5 +24,6 @@ runtime is an App-owned compatibility component, not a second product surface.
 - Keep the public website inside the reviewed static `site/` capsule and run
   `scripts/verify-pages-site.sh` after website-source changes.
 
-See [`../CONTRIBUTING.md`](../CONTRIBUTING.md), [`DEVELOPMENT.md`](DEVELOPMENT.md), and
-[`DELIVERY_WORKFLOW.md`](DELIVERY_WORKFLOW.md) for the public contribution workflow.
+See [`../CONTRIBUTING.md`](../CONTRIBUTING.md), [`PUBLIC_SOURCE_POLICY.md`](PUBLIC_SOURCE_POLICY.md),
+[`DEVELOPMENT.md`](DEVELOPMENT.md), and [`DELIVERY_WORKFLOW.md`](DELIVERY_WORKFLOW.md) for the public
+contribution workflow and repository boundary.

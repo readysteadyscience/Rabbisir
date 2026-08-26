@@ -15,4 +15,18 @@ Rabbisir is an independent native macOS workspace built on [DeepSeek Harness](ht
 
 Rabbisir is an independent, non-official third-party project. It is not affiliated with, sponsored by, or endorsed by DeepSeek.
 
-See [development](docs/DEVELOPMENT.md), [contributing](CONTRIBUTING.md), and [upstream attribution and compatibility](Legal/README.md).
+## Official Rabbisir and Rabbisir Open
+
+- **Official Rabbisir App** — download the current signed and notarized installer from the dedicated
+  [official distribution repository](https://github.com/readysteadyscience/Rabbisir-Releases), or
+  [download the latest DMG directly](https://github.com/readysteadyscience/Rabbisir-Releases/releases/latest/download/Rabbisir.dmg).
+- **Rabbisir Open** — this repository contains the public source, contributor build, community
+  material, and official website. Its unsigned local `Rabbisir Open` build has a separate identity
+  and is not the officially distributed App.
+
+Public Open milestones use `open-vX.Y.Z` tags. Historical official-style tags and Releases already
+present in this repository remain immutable compatibility records; new official App versions and
+assets are published only from `readysteadyscience/Rabbisir-Releases`.
+
+See the [public-source policy](docs/PUBLIC_SOURCE_POLICY.md), [development guide](docs/DEVELOPMENT.md),
+[contributing guide](CONTRIBUTING.md), and [upstream attribution and compatibility](Legal/README.md).

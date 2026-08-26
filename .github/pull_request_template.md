@@ -9,10 +9,12 @@
 - Compatibility, privacy, accessibility, or data impact:
 - Explicitly out of scope:
 - Rollback approach:
+- Repository role affected (Open source / community / website / none):
 
 ## Validation
 
 - [ ] `scripts/verify-documentation-links.sh`
+- [ ] `scripts/test-public-delivery-boundary.sh`
 - [ ] `scripts/verify-public-repository.sh`
 - [ ] `xcrun swift-format lint --strict --recursive Package.swift Sources Tests`
 - [ ] `scripts/build-fresh-public-product.sh RabbisirOpen debug`
@@ -39,3 +41,4 @@ A completed CI run is not, by itself, a maintainer review conclusion. See
 - [ ] Upstream protocol identifiers, licenses, notices, and attribution remain compatible.
 - [ ] Any public version change follows `docs/VERSIONING.md` and passes `scripts/verify-release-version.sh`.
 - [ ] This pull request does not claim or perform a production release.
+- [ ] This change cannot publish official App tags/Releases/assets or write to `Rabbisir-Releases`.

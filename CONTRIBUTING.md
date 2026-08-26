@@ -22,8 +22,11 @@ defined in [`docs/CODE_REVIEW.md`](docs/CODE_REVIEW.md). A passing local run or 
 maintainer review conclusion and does not make a change releasable.
 
 Every pull request supplies its exact scope and validation evidence for maintainer review. Only a
-`Pass` conclusion with reviewed scope, evidence, and uncovered risks may be merged. Official
-publication is maintained outside the contributor workflow.
+`Pass` conclusion with reviewed scope, evidence, and uncovered risks may be merged. Official App
+publication is maintained in
+[`readysteadyscience/Rabbisir-Releases`](https://github.com/readysteadyscience/Rabbisir-Releases)
+outside the contributor workflow. See the [public-source policy](docs/PUBLIC_SOURCE_POLICY.md) for
+the source, website, Open-milestone, and official-distribution boundaries.
 
 ## Development setup
 
@@ -40,11 +43,15 @@ isolated `RabbisirOpen` product. `scripts/build-and-run-open.sh` creates an unsi
 - Keep generated vendor runtime payloads out of Git.
 - Preserve upstream licenses, notices, protocol identifiers, and source attribution.
 - Do not include credentials, user data, local paths, screenshots, task transcripts, or unpublished product plans.
+- Do not add automation that writes official App tags, Releases, assets, Appcast, manifests, or
+  checksums. An explicitly authorized Open milestone uses an `open-vX.Y.Z` tag and remains distinct
+  from the official App.
 
 Before review, run:
 
 ```sh
 scripts/verify-public-repository.sh
+scripts/test-public-delivery-boundary.sh
 xcrun swift-format lint --strict --recursive Package.swift Sources Tests
 scripts/build-fresh-public-product.sh RabbisirOpen debug
 scripts/test-public-swiftpm.sh
