@@ -23,8 +23,8 @@ under Rabbisir's MIT source license.
 
 The shared site script stores only the language choice under `rabbisir-language`; it contains no
 analytics, cookies, credentials, updater logic, payment path, or automatic external navigation. The
-separate Release Details module performs only the documented same-origin official-release-feed
-request and uses a dedicated ten-minute local cache.
+separate Release Details module reads the public release authority described below and uses a
+dedicated five-minute local cache with the last bundled website snapshot as its final fallback.
 
 Run the local and CI-equivalent gates after website-source changes:
 
@@ -36,56 +36,53 @@ scripts/verify-public-repository.sh
 ## Official App release information channel
 
 The stable Release Details URL is [`site/download.html`](../site/download.html). Despite the retained
-path, it is a version-history page rather than an installer page. It loads only the same-origin,
-public-read-only [`site/official-app-releases.json`](../site/official-app-releases.json) document and
-never reads a GitHub repository's Releases API, an Appcast, a private repository, or a credential.
-Open-source Releases, distribution assets and automatic-update metadata do not define this feed.
+path, it is a version-history page rather than an installer page. Its authority is the anonymous,
+public-read-only
+[`Rabbisir-Releases/official-app-releases.json`](https://raw.githubusercontent.com/readysteadyscience/Rabbisir-Releases/main/official-app-releases.json)
+document. It never reads a private repository or a credential. The same-origin
+[`site/official-app-releases.json`](../site/official-app-releases.json) file remains only as the last
+bundled v0.1.4 fallback when neither a valid live response nor a valid browser cache is available,
+and supplements historical versions that the live authority has not migrated yet. Live schema-2
+records always win when the same display version exists in both sources.
+Open-source Releases do not define this feed.
 
-Schema version 1 is a complete replacement document with a latest-version pointer, newest-first
-bilingual history, ISO publication dates, plain-text summaries and highlights, and a content
-receipt. It points to `official-app-release-source.json`; the companion receipt repeats the channel,
-latest version, update time and content receipt, and both JSON files have SHA-256 sidecars. This
-four-file closure avoids circular hashes and is listed in `PagesSourceManifest.json` for atomic Pages
-publication. `scripts/verify-official-release-feed.mjs` checks schema, ordering, bilingual closure,
-public-safe wording, feed/receipt agreement and both sidecars. Release text is rendered only through
-DOM `textContent`.
+Authority schema version 2 carries the latest version/build/tag, a newest-first history, ISO
+publication dates, every selected release type, bilingual category items, the canonical Release URL
+and the public asset closure. The only accepted authority is
+`readysteadyscience/Rabbisir-Releases`, with its fixed raw Appcast and stable DMG URLs. The website
+validates this complete structure before rendering and displays all selected feature, optimization
+and fix categories. Release text is rendered only through DOM `textContent`. The bundled schema-1
+snapshot retains its existing content receipt and sidecars and is validated separately as fallback.
 
-An authorized formal App publication prepares and validates all four files in a temporary staging
-root, binds them into the Pages source manifest and then publishes the Pages artifact. App publication
-and website-data publication are separate results and must be read back independently. Rollback
-republishes the previous accepted feed, source receipt and both sidecars without changing page code.
-The browser keeps a validated feed for ten minutes; after expiry it revalidates once and continues to
-show a valid saved feed when the data request fails.
+An authorized formal App publication updates and validates the authority document in the release
+repository, independently of this static Pages deployment. The website code does not change for a
+new version. The browser keeps a validated authority response for five minutes; after expiry it
+revalidates once, keeps a valid saved response visible when the network fails, and finally uses the
+bundled v0.1.4 snapshot rather than showing a blank page. Rolling back the website migration means
+redeploying the previous Pages commit; rolling back release data means restoring the previous
+validated release-repository commit. These remain separate actions and results.
 
-Pages manifest schema 4 records two independent provenance bindings. `productArtifactSource` remains
-the commit and tree that produced the signed and notarized App artifacts; `websiteToolingSource`
-records the clean commit and tree used to generate the Pages capsule plus its exact overlay-receipt
-digest. A website-tooling repair never relabels frozen App bytes as a new product build, and a frozen
-product manifest cannot be used with unreceipted or dirty website tooling.
-Release-time website generation starts from the exact reviewed public Git tree and preserves that
-tree's independent `AppVersion.swift` and runtime provenance byte for byte. It never accepts or copies
-the official App's VendorRuntime, AppVersion or private product-source files into the public Pages
-source. Product provenance remains a receipt binding only; website data, Appcast and the stable-DMG
-deployment record are the release-time projection.
-When a website-only tool repair follows already notarized artifacts,
-`prepare-frozen-pages-continuation.sh` is the only supported local continuation entrypoint. It
-revalidates the frozen preflight and artifact manifests plus their sidecars and exact ZIP, DMG and
-Appcast bytes, then produces a new delivery plan, Pages source and
-`WebsiteDeliveryContinuationReceipt.json` without signing, notarization, GitHub writes or Pages
-deployment. The migrated product-artifact envelope keeps its canonical payload digest internally;
-its `.sha256` sidecar covers the exact serialized file, and the continuation receipt records both.
+The schema-4 `PagesSourceManifest.json` remains the immutable v0.1.4 legacy DMG/Appcast deployment
+snapshot. Its product and website-tooling provenance describe that snapshot, not this later static
+page-code migration; the current website source is identified by its public Git commit and Pages run.
+
+The v0.1.4 `site/appcast.xml` is retained byte-for-byte as the legacy update channel. It may be
+replaced once, only after the release owner provides a signed bridge whose enclosure identifies the
+next official release in `Rabbisir-Releases`. Until that receipt exists, the old feed remains intact;
+the website never manufactures an enclosure or signature. After the bridge, the release repository's
+raw `appcast.xml` is the sole authority for newer installations.
 
 ## Direct download continuity
 
-The homepage primary action uses the permanent Pages URL
-`https://readysteadyscience.github.io/Rabbisir/Rabbisir.dmg`. The authorized release transaction
-records the reviewed versioned Release DMG URL, size and SHA-256 in the Pages source manifest. The
-DMG never enters Git history: after the Release asset has passed public readback, the explicit Pages
-workflow downloads it anonymously, verifies the frozen record, and materializes the same-origin
-stable filename only inside the temporary deployment artifact.
-Versioned filenames, sizes, SHA-256 values, the canonical Release link and installation-acceptance
-status remain in [`site/DOWNLOADS.md`](../site/DOWNLOADS.md). `Rabbisir Open` contributor builds are
-not official downloadable Apps. Appcast, Release assets and update behavior remain unchanged.
+The homepage primary action permanently uses
+`https://github.com/readysteadyscience/Rabbisir-Releases/releases/latest/download/Rabbisir.dmg`.
+The release repository publishes that alias byte-identical to the current versioned DMG, so later
+official releases update the download without changing or redeploying this website. The previous
+Pages-hosted `Rabbisir.dmg` remains an unlinked migration rollback surface and is not the current
+download authority.
+The v0.1.4 migration snapshot remains in [`site/DOWNLOADS.md`](../site/DOWNLOADS.md) as historical
+evidence; current versioned assets and checksums live in the release repository. `Rabbisir Open`
+contributor builds are not official downloadable Apps.
 
 ## 中文边界
 
@@ -94,31 +91,23 @@ not official downloadable Apps. Appcast, Release assets and update behavior rema
 Rabbisir 标识、创作者头像和微信联系二维码均遵守上文列出的公开资产用途与许可边界。
 
 共享脚本只保存 `rabbisir-language` 语言选择，不包含分析、Cookie、凭据、更新、支付或自动外跳。
-`site/download.html` 是稳定的正式版本详情地址，只读取同源的
-`site/official-app-releases.json` 官网专用数据，不读取开源仓库 Release、Appcast、私有仓库或
-任何凭据。正式 App 发布事务以完整替换方式生成并校验 feed、来源回执与各自摘要侧车，将四个
-文件纳入 Pages 清单原子发布，并分别回读 App 发布与官网数据发布结果；官网更新失败不得伪装
-为 App 发布成功。页面使用十分钟本地缓存，网络失败时优先显示已校验的旧数据，不会白屏。
-Pages 清单 schema 4 分别记录 `productArtifactSource` 与 `websiteToolingSource`：前者始终绑定实际
-生成已签名、公证 App 资产的 commit/tree，后者绑定生成官网胶囊的干净工具 commit/tree 与
-overlay receipt 摘要。官网工具修复不得把冻结 App 字节重称为新产品构建，未签收或脏的官网工具
-也不得与既有产品清单拼接发布。
-正式发布时的官网生成只从精确审查过的公开 Git tree 起步，并逐字节保留该 tree 独立的
-`AppVersion.swift` 与 runtime provenance；不得接收或复制正式 App 的 VendorRuntime、AppVersion
-或私有产品源码到公开 Pages source。产品 provenance 只保留在回执绑定中，发布时仅投影官网数据、
-Appcast 与稳定 DMG 部署记录。
-若官网工具修复发生在 App 资产已公证之后，只能使用
-`prepare-frozen-pages-continuation.sh` 做本地续接：重新校验冻结 preflight、ArtifactManifest、
-两份 sidecar 以及精确 ZIP、DMG、Appcast 字节，再生成新的 plan、PagesSource 与
-`WebsiteDeliveryContinuationReceipt.json`；该入口不签名、不公证、不写 GitHub，也不部署 Pages。
-迁移后的产品产物 envelope 在内部保留规范 payload 摘要，`.sha256` sidecar 覆盖精确序列化文件，
-续接回执同时记录两者。
+`site/download.html` 是稳定的正式版本详情地址，权威数据源为公开只读的
+`https://raw.githubusercontent.com/readysteadyscience/Rabbisir-Releases/main/official-app-releases.json`；
+不读取私有仓库或任何凭据。schema 2 包含最新版本/build/tag、全部已选发布类型、各类型双语说明、
+Release URL 与资产闭包。页面严格校验后展示；五分钟缓存失效后重新请求，失败时先保留已验证缓存，
+最后回退到站内 v0.1.4 schema-1 快照，不会白屏。站内快照还会补齐权威数据尚未迁入的历史版本；
+同一显示版本冲突时始终以线上 schema 2 为准。以后正式版本只更新发行仓库数据，不再重新部署整站。
+schema-4 `PagesSourceManifest.json` 只描述 v0.1.4 旧 DMG/Appcast 部署快照；本次页面源码以公开
+Git commit 与 Pages run 为准，不把旧工具 provenance 重称为本次迁移来源。
 
-首页主要下载操作固定使用
-`https://readysteadyscience.github.io/Rabbisir/Rabbisir.dmg`。获授权的发布事务会把已审查的
-版本化 Release DMG 的公开 URL、大小与 SHA-256 绑定到 Pages 来源清单；DMG 不进入 Git 历史。
-Release 资产完成公开回读后，显式 Pages 工作流匿名下载并校验冻结记录，只在临时部署 artifact
-中生成这个同源稳定文件名。
-版本化文件名、大小、SHA-256、正式 Release 链接和安装验收状态继续保留在
-[`site/DOWNLOADS.md`](../site/DOWNLOADS.md)；Appcast、Release 资产与自动更新行为均不改变。
+旧 `site/appcast.xml` 保持 v0.1.4 已签名原字节。只有发行负责人提供指向下一正式版本且签名、
+enclosure 均已回读的桥接回执后，官网才能对它做一次替换；当前不得猜测或生成更新条目。桥接完成后，
+新安装版只使用发行仓库 raw `appcast.xml` 权威 feed。
+
+首页主要下载操作永久固定使用
+`https://github.com/readysteadyscience/Rabbisir-Releases/releases/latest/download/Rabbisir.dmg`。
+发行仓库保证该别名与当前版本化 DMG 同字节，因此后续版本无需修改或重新部署官网。旧 Pages
+`Rabbisir.dmg` 仅作为未链接的迁移回滚面，不再是当前下载权威。
+[`site/DOWNLOADS.md`](../site/DOWNLOADS.md) 仅保留 v0.1.4 迁移快照作为历史证据；当前版本化资产与
+校验和均由发行仓库承载。
 本地 `Rabbisir Open` 构建不是官方安装包。

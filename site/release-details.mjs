@@ -1,8 +1,14 @@
-import { localizedReleaseText, validateOfficialReleaseFeed } from "./release-data.mjs";
+import {
+  localizedReleaseText,
+  mergeNormalizedReleaseFeeds,
+  normalizeOfficialReleaseFeed,
+} from "./release-data.mjs";
 
-const feedURL = "official-app-releases.json";
-const cacheKey = "rabbisir-official-app-releases-v1";
-const cacheLifetimeMilliseconds = 10 * 60 * 1000;
+export const feedURL = "https://raw.githubusercontent.com/readysteadyscience/Rabbisir-Releases/main/official-app-releases.json";
+export const fallbackFeedURL = "official-app-releases.json";
+export const latestDownloadURL = "https://github.com/readysteadyscience/Rabbisir-Releases/releases/latest/download/Rabbisir.dmg";
+const cacheKey = "rabbisir-official-app-releases-v2";
+const cacheLifetimeMilliseconds = 5 * 60 * 1000;
 const requestTimeoutMilliseconds = 8_000;
 
 export function cacheIsFresh(savedAt, now = Date.now()) {
@@ -45,8 +51,12 @@ export function createReleaseDetailsController({
   function readCachedFeed() {
     try {
       const cached = JSON.parse(storage.getItem(cacheKey));
+      const primary = normalizeOfficialReleaseFeed(cached.feed);
+      const history = cached.history ? normalizeOfficialReleaseFeed(cached.history) : null;
       return {
-        feed: validateOfficialReleaseFeed(cached.feed),
+        feed: history ? mergeNormalizedReleaseFeeds(primary, history) : primary,
+        history,
+        historyRaw: cached.history ?? null,
         savedAt: cached.savedAt,
       };
     } catch {
@@ -54,9 +64,9 @@ export function createReleaseDetailsController({
     }
   }
 
-  function writeCachedFeed(feed) {
+  function writeCachedFeed(feed, history) {
     try {
-      storage.setItem(cacheKey, JSON.stringify({ feed, savedAt: now() }));
+      storage.setItem(cacheKey, JSON.stringify({ feed, history, savedAt: now() }));
     } catch {
       // A non-persistent App browser can deny storage; the live response still renders.
     }
@@ -85,11 +95,22 @@ export function createReleaseDetailsController({
         headingGroup.append(element("p", "release-latest-label", copy("Latest release", "最新版本")));
       }
       headingGroup.append(element("h3", "release-version", release.version));
+      if (release.build) {
+        headingGroup.append(element("p", "release-build", copy(`Build ${release.build}`, `构建 ${release.build}`)));
+      }
       const time = element("time", "release-date", formattedReleaseDate(release.publishedOn, language));
       time.dateTime = release.publishedOn;
       header.append(headingGroup, time);
 
       const body = element("div", "release-entry-body");
+      if (Array.isArray(release.releaseTypes) && release.releaseTypes.length > 0) {
+        const types = element("ul", "release-types");
+        types.setAttribute("aria-label", copy("Release types", "发布类型"));
+        release.releaseTypes.forEach((type) => {
+          types.append(element("li", "release-type", localizedReleaseText(type.label, language)));
+        });
+        body.append(types);
+      }
       body.append(
         element("p", "release-entry-title", localizedReleaseText(release.title, language)),
         element("p", "release-entry-summary", localizedReleaseText(release.summary, language)),
@@ -99,6 +120,15 @@ export function createReleaseDetailsController({
         highlights.append(element("li", "", localizedReleaseText(highlight, language)));
       });
       body.append(highlights);
+      const actions = element("div", "release-entry-actions");
+      const download = element("a", "release-download-link", copy("Download DMG", "下载 DMG"));
+      download.setAttribute("href", index === 0 ? latestDownloadURL : release.releaseURL);
+      download.setAttribute("aria-label", index === 0
+        ? copy(`Download ${release.version} DMG`, `下载 ${release.version} DMG`)
+        : copy(`View ${release.version} release`, `查看 ${release.version} Release`));
+      if (index !== 0) download.textContent = copy("View release", "查看 Release");
+      actions.append(download);
+      body.append(actions);
       article.append(header, body);
       fragment.append(article);
     });
@@ -106,7 +136,7 @@ export function createReleaseDetailsController({
     list.replaceChildren(fragment);
     list.setAttribute("aria-busy", "false");
     documentObject.querySelector("#release-feed-status").textContent = fallback
-      ? copy("Showing saved release information while the live source is unavailable.", "实时数据暂不可用，当前显示已保存的版本信息。")
+      ? copy("Showing verified fallback release information while the live source is unavailable.", "实时数据暂不可用，当前显示已验证的备用版本信息。")
       : copy("Official release information is up to date.", "正式版本信息已更新。");
   }
 
@@ -128,11 +158,11 @@ export function createReleaseDetailsController({
     );
   }
 
-  async function fetchFeed() {
+  async function fetchFeed(url) {
     const controller = new AbortController();
     const timeout = setTimeoutFunction(() => controller.abort(), timeoutMilliseconds);
     try {
-      const response = await fetchFunction(feedURL, {
+      const response = await fetchFunction(url, {
         cache: "no-cache",
         credentials: "omit",
         headers: { Accept: "application/json" },
@@ -140,7 +170,8 @@ export function createReleaseDetailsController({
         signal: controller.signal,
       });
       if (!response.ok) throw new Error("official release source is unavailable");
-      return validateOfficialReleaseFeed(await response.json());
+      const rawFeed = await response.json();
+      return { normalized: normalizeOfficialReleaseFeed(rawFeed), raw: rawFeed };
     } finally {
       clearTimeoutFunction(timeout);
     }
@@ -149,21 +180,34 @@ export function createReleaseDetailsController({
   async function load() {
     const cached = readCachedFeed();
     if (cached) renderFeed(cached.feed);
-    if (cached && cacheIsFresh(cached.savedAt, now())) return "fresh-cache";
+    if (cached?.history && cacheIsFresh(cached.savedAt, now())) return "fresh-cache";
 
-    try {
-      const feed = await fetchFeed();
-      writeCachedFeed(feed);
-      renderFeed(feed);
+    const [liveResult, bundledResult] = await Promise.allSettled([
+      fetchFeed(feedURL),
+      fetchFeed(fallbackFeedURL),
+    ]);
+    if (liveResult.status === "fulfilled") {
+      const history = bundledResult.status === "fulfilled"
+        ? bundledResult.value
+        : cached?.history
+          ? { normalized: cached.history, raw: cached.historyRaw }
+          : null;
+      writeCachedFeed(liveResult.value.raw, history?.raw ?? null);
+      renderFeed(history
+        ? mergeNormalizedReleaseFeeds(liveResult.value.normalized, history.normalized)
+        : liveResult.value.normalized);
       return "network";
-    } catch {
-      if (cached) {
-        renderFeed(cached.feed, true);
-        return "saved-fallback";
-      }
-      renderUnavailable();
-      return "unavailable";
     }
+    if (cached) {
+      renderFeed(cached.feed, true);
+      return "saved-fallback";
+    }
+    if (bundledResult.status === "fulfilled") {
+      renderFeed(bundledResult.value.normalized, true);
+      return "bundled-fallback";
+    }
+    renderUnavailable();
+    return "unavailable";
   }
 
   function rerender() {

@@ -118,17 +118,17 @@ verify_sha256() {
     || fail "$file differs from the reviewed public-candidate digest"
 }
 
-verify_sha256 991a31f25cf87d5bd6a00218f2e729bb00134bc884b2ef0f5c447702f7695b7f \
+verify_sha256 1b499831b736da2a4d1c691a13fbfffc342d409d8aae444a5dd0cfe79a7a49c7 \
   site/index.html
 verify_sha256 04a918c56421607e2d50d7e7d62f218abb6ae70310bd34f5f01ef4bb4316efd1 \
   site/download.html
-verify_sha256 a45dda569f11868d1062d73a9f10b1b9c2d4cb29c9c9fb6513c7f573803055b1 \
+verify_sha256 fa326bbcc8b7b0c05ef9e2be6a86c4a5f4f6e9ec77e91aa94ff3424a745e1b59 \
   site/styles.css
 verify_sha256 fe5fbcfe213e9a0d487b6f84fbf8beb6db0d6e10525d3625ddb869d19aca0ba6 \
   site/site.js
-verify_sha256 f695b8f59b34af41aada973aebf49a7380d2cb5c0facdba3d019f75cbb29b6fd \
+verify_sha256 7c05b081caf48f312c799d26dbbb8ddc8503163caafe5bc2cf5112b9ddd502c8 \
   site/release-data.mjs
-verify_sha256 bfdb8cdfc8c6d51d0528bb01cca08c15443867600f25fadc13691f2a9dced5b8 \
+verify_sha256 09fa876c5b1e91168b1c3f7897c7d90bd18a157bb44681e0a3c0be9560f2e66c \
   site/release-details.mjs
 verify_sha256 296286aa112c4400af8e96191ab888f81abd4bd1d5dc7294112a622ef43581b1 \
   site/assets/rabbisir/discord-symbol-blurple.svg
@@ -152,7 +152,7 @@ grep -q 'Copyright (c) 2026 YelZap' site/LICENSE \
 cmp -s LICENSE site/LICENSE \
   || fail "the Pages-local license differs from the reviewed Rabbisir root license"
 
-private_site_pattern='app''cast|spar''kle|support rab''bisir|appear''ance|wall''paper|official''overlay|overlay''receipt|developer id app''lication:|apple team i''d|begin (rsa |ec |openssh )?private ke''y|/use''rs/[^/ ]+|/pri''vate/tm''p/|deepseek_api''_key[[:space:]]*='
+private_site_pattern='spar''kle|support rab''bisir|appear''ance|wall''paper|official''overlay|overlay''receipt|developer id app''lication:|apple team i''d|begin (rsa |ec |openssh )?private ke''y|/use''rs/[^/ ]+|/pri''vate/tm''p/|deepseek_api''_key[[:space:]]*='
 run_private_site_scan() {
   if command -v rg >/dev/null 2>&1
   then
@@ -218,7 +218,7 @@ class SiteParser(HTMLParser):
 
 failures = []
 forbidden_tags = {"style", "form", "iframe", "source", "video", "audio", "object", "embed"}
-dmg_url = "https://readysteadyscience.github.io/Rabbisir/Rabbisir.dmg"
+dmg_url = "https://github.com/readysteadyscience/Rabbisir-Releases/releases/latest/download/Rabbisir.dmg"
 index_resources = {
     ("icon", "assets/rabbisir/rabbisir-mark-dark.png"),
     ("stylesheet", "styles.css"),
@@ -347,13 +347,19 @@ reject_pattern \
   "the reviewed interaction script gained a network, cookie, navigation, or dynamic-code path" \
   'fetch\(|XMLHttpRequest|WebSocket|EventSource|sendBeacon|document\.cookie|window\.open|location\.|eval\(|new Function' \
   site/site.js
-grep -q '^const feedURL = "official-app-releases.json";$' site/release-details.mjs \
-  || fail "the Release Details page does not use the same-origin official App feed"
-[ "$(grep -c 'fetchFunction(feedURL' site/release-details.mjs)" -eq 1 ] \
-  || fail "the Release Details page must have exactly one bounded feed request"
+grep -Fq 'export const feedURL = "https://raw.githubusercontent.com/readysteadyscience/Rabbisir-Releases/main/official-app-releases.json";' site/release-details.mjs \
+  || fail "the Release Details page does not use the public release authority"
+grep -Fq 'export const fallbackFeedURL = "official-app-releases.json";' site/release-details.mjs \
+  || fail "the Release Details page lacks its bundled fallback"
+grep -Fq 'export const latestDownloadURL = "https://github.com/readysteadyscience/Rabbisir-Releases/releases/latest/download/Rabbisir.dmg";' site/release-details.mjs \
+  || fail "the Release Details page download authority changed"
+grep -Fq 'mergeNormalizedReleaseFeeds(liveResult.value.normalized, history.normalized)' site/release-details.mjs \
+  || fail "the live Release Details feed no longer preserves bundled release history"
+[ "$(grep -c 'fetchFunction(url' site/release-details.mjs)" -eq 1 ] \
+  || fail "the Release Details page must have one bounded request implementation"
 reject_pattern \
-  "the official App feed path gained an external Release, credential, navigation, or dynamic-code dependency" \
-  'https?://|api\.github\.com|/releases|appcast|document\.cookie|window\.open|location\.|eval\(|new Function' \
+  "the official App feed path gained a credential, active navigation, or dynamic-code dependency" \
+  'api\.github\.com|document\.cookie|window\.open|location\.|eval\(|new Function|authorization|bearer[[:space:]]|token[[:space:]]*=' \
   site/release-data.mjs site/release-details.mjs \
   site/official-app-release-source.json site/official-app-releases.json
 node scripts/verify-official-release-feed.mjs
@@ -480,7 +486,7 @@ grep -q '与 DeepSeek 不存在隶属、赞助或背书关系' site/index.html \
 grep -q '<span class="wechat-profile-label" data-en="WeChat" data-zh="微信">WeChat</span>' \
   site/index.html \
   || fail "the explicit bilingual WeChat contact entry is missing"
-official_dmg_url='https://readysteadyscience.github.io/Rabbisir/Rabbisir.dmg'
+official_dmg_url='https://github.com/readysteadyscience/Rabbisir-Releases/releases/latest/download/Rabbisir.dmg'
 grep -Fq "<a class=\"download-button\" href=\"$official_dmg_url\"" site/index.html \
   || fail "the homepage primary download does not point directly to the official DMG"
 grep -Fq '<span data-en="Download" data-zh="下载">Download</span>' site/index.html \

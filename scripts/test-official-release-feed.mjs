@@ -5,8 +5,19 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { cacheIsFresh, createReleaseDetailsController, formattedReleaseDate } from "../site/release-details.mjs";
-import { validateOfficialReleaseFeed } from "../site/release-data.mjs";
+import {
+  cacheIsFresh,
+  createReleaseDetailsController,
+  fallbackFeedURL,
+  feedURL,
+  latestDownloadURL,
+  formattedReleaseDate,
+} from "../site/release-details.mjs";
+import {
+  mergeNormalizedReleaseFeeds,
+  normalizeOfficialReleaseFeed,
+  validateOfficialReleaseFeed,
+} from "../site/release-data.mjs";
 import {
   contentReceipt,
   verifyFeed,
@@ -19,6 +30,36 @@ const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url))
 const feedPath = path.join(repositoryRoot, "site/official-app-releases.json");
 const feed = JSON.parse(fs.readFileSync(feedPath, "utf8"));
 const sourceReceipt = JSON.parse(fs.readFileSync(path.join(repositoryRoot, "site/official-app-release-source.json"), "utf8"));
+const authorityFeed = {
+  $schema: "./official-app-releases.schema.json",
+  schemaVersion: 2,
+  channel: "production",
+  updatedAt: "2026-08-26T04:17:51Z",
+  authority: {
+    repository: "readysteadyscience/Rabbisir-Releases",
+    appcastURL: "https://raw.githubusercontent.com/readysteadyscience/Rabbisir-Releases/main/appcast.xml",
+    stableDownloadURL: "https://github.com/readysteadyscience/Rabbisir-Releases/releases/latest/download/Rabbisir.dmg",
+  },
+  latest: { version: "0.1.4", build: "6", tag: "v0.1.4" },
+  releases: [{
+    version: "0.1.4",
+    build: "6",
+    tag: "v0.1.4",
+    publishedOn: "2026-08-26",
+    selectedTypes: ["feature", "optimization", "fix"],
+    categories: {
+      feature: [{ en: "Adds a verified user-facing capability.", zh: "新增一项已验证的用户功能。" }],
+      optimization: [{ en: "Improves a verified everyday workflow.", zh: "改进一项已验证的日常流程。" }],
+      fix: [{ en: "Resolves a verified issue from the previous version.", zh: "修复上一版本中一项已确认的问题。" }],
+    },
+    releaseURL: "https://github.com/readysteadyscience/Rabbisir-Releases/releases/tag/v0.1.4",
+    assets: [
+      { name: "Rabbisir-0.1.4-6.zip", url: "https://github.com/readysteadyscience/Rabbisir-Releases/releases/download/v0.1.4/Rabbisir-0.1.4-6.zip", size: 100, sha256: "a".repeat(64) },
+      { name: "Rabbisir-0.1.4-6.dmg", url: "https://github.com/readysteadyscience/Rabbisir-Releases/releases/download/v0.1.4/Rabbisir-0.1.4-6.dmg", size: 200, sha256: "b".repeat(64) },
+      { name: "Rabbisir.dmg", url: "https://github.com/readysteadyscience/Rabbisir-Releases/releases/download/v0.1.4/Rabbisir.dmg", size: 200, sha256: "b".repeat(64) },
+    ],
+  }],
+};
 
 function clone(value) {
   return JSON.parse(JSON.stringify(value));
@@ -95,7 +136,7 @@ function createFakeDocument(language = "en") {
 
 function createStorage(cachedValue = null) {
   const values = new Map();
-  if (cachedValue !== null) values.set("rabbisir-official-app-releases-v1", JSON.stringify(cachedValue));
+  if (cachedValue !== null) values.set("rabbisir-official-app-releases-v2", JSON.stringify(cachedValue));
   return {
     getItem: (key) => values.get(key) ?? null,
     setItem: (key, value) => values.set(key, value),
@@ -115,13 +156,51 @@ function controllerFor({ documentObject, fetchFunction, storage, now = () => 1_0
 
 verifyFeedFile(feedPath);
 assert.equal(validateOfficialReleaseFeed(feed), feed);
+assert.equal(validateOfficialReleaseFeed(authorityFeed), authorityFeed);
 assert.equal(verifySourceReceipt(feed, sourceReceipt), sourceReceipt);
 assert.match(feed.latest, /^Rabbisir \d+\.\d+\.\d+$/);
 assert.equal(feed.releases.some((release) => / · r\d+\.\d{2}$/.test(release.version)), true);
 assert.equal(formattedReleaseDate("2026-08-20", "en"), "August 20, 2026");
 assert.equal(formattedReleaseDate("2026-08-20", "zh"), "2026年8月20日");
-assert.equal(cacheIsFresh(1_000, 1_000 + 599_999), true);
-assert.equal(cacheIsFresh(1_000, 1_000 + 600_000), false);
+assert.equal(cacheIsFresh(1_000, 1_000 + 299_999), true);
+assert.equal(cacheIsFresh(1_000, 1_000 + 300_000), false);
+assert.equal(latestDownloadURL, "https://github.com/readysteadyscience/Rabbisir-Releases/releases/latest/download/Rabbisir.dmg");
+
+const normalizedAuthorityFeed = normalizeOfficialReleaseFeed(authorityFeed);
+const normalizedBundledFeed = normalizeOfficialReleaseFeed(feed);
+const mergedReleaseFeed = mergeNormalizedReleaseFeeds(normalizedAuthorityFeed, normalizedBundledFeed);
+assert.equal(normalizedAuthorityFeed.latest, "Rabbisir 0.1.4");
+assert.equal(normalizedAuthorityFeed.releases[0].build, "6");
+assert.deepEqual(
+  normalizedAuthorityFeed.releases[0].releaseTypes.map((type) => type.key),
+  ["feature", "optimization", "fix"],
+);
+assert.equal(normalizedAuthorityFeed.releases[0].highlights.length, 3);
+assert.equal(mergedReleaseFeed.releases.length, feed.releases.length);
+assert.equal(mergedReleaseFeed.releases[0].build, "6");
+assert.equal(mergedReleaseFeed.releases[1].version, "Rabbisir 0.1.2");
+assert.equal(mergedReleaseFeed.releases.filter((release) => release.version === "Rabbisir 0.1.4").length, 1);
+
+const missingSelectedCategory = clone(authorityFeed);
+delete missingSelectedCategory.releases[0].categories.fix;
+assert.throws(() => validateOfficialReleaseFeed(missingSelectedCategory), /categories differ/);
+const unselectedCategory = clone(authorityFeed);
+unselectedCategory.releases[0].selectedTypes = ["fix"];
+assert.throws(() => validateOfficialReleaseFeed(unselectedCategory), /categories differ/);
+const wrongAuthority = clone(authorityFeed);
+wrongAuthority.authority.repository = "readysteadyscience/Rabbisir";
+assert.throws(() => validateOfficialReleaseFeed(wrongAuthority), /authority differs/);
+const wrongLatestBuild = clone(authorityFeed);
+wrongLatestBuild.latest.build = "7";
+assert.throws(() => validateOfficialReleaseFeed(wrongLatestBuild), /latest identity must match/);
+const missingStableAlias = clone(authorityFeed);
+missingStableAlias.releases[0].assets[2] = {
+  name: "checksums.txt",
+  url: "https://github.com/readysteadyscience/Rabbisir-Releases/releases/download/v0.1.4/checksums.txt",
+  size: 50,
+  sha256: "c".repeat(64),
+};
+assert.throws(() => validateOfficialReleaseFeed(missingStableAlias), /stable DMG alias/);
 
 const forwardMajor = feed.releases.reduce((maximum, release) => {
   const match = /^Rabbisir (\d+)\.\d+\.\d+/.exec(release.version);
@@ -204,7 +283,7 @@ assert.throws(() => verifySourceReceipt(feed, mismatchedSourceReceipt), /source 
 
 {
   const documentObject = createFakeDocument();
-  const storage = createStorage({ feed, savedAt: 999_500 });
+  const storage = createStorage({ feed: authorityFeed, history: feed, savedAt: 999_500 });
   let requestCount = 0;
   const controller = controllerFor({
     documentObject,
@@ -213,7 +292,7 @@ assert.throws(() => verifySourceReceipt(feed, mismatchedSourceReceipt), /source 
   });
   assert.equal(await controller.load(), "fresh-cache");
   assert.equal(requestCount, 0);
-  assert.equal(documentObject.list.children.length, feed.releases.length);
+  assert.equal(documentObject.list.children.length, mergedReleaseFeed.releases.length);
   assert.equal(documentObject.list.getAttribute("aria-busy"), "false");
   assert.equal(documentObject.status.textContent, "Official release information is up to date.");
 }
@@ -226,18 +305,24 @@ assert.throws(() => verifySourceReceipt(feed, mismatchedSourceReceipt), /source 
     documentObject,
     fetchFunction: async (url, options) => {
       requestCount += 1;
-      assert.equal(url, "official-app-releases.json");
+      assert.ok(url === feedURL || url === fallbackFeedURL);
       assert.equal(options.cache, "no-cache");
       assert.equal(options.credentials, "omit");
       assert.equal(options.referrerPolicy, "no-referrer");
-      return { ok: true, json: async () => clone(feed) };
+      return { ok: true, json: async () => clone(url === feedURL ? authorityFeed : feed) };
     },
     storage,
   });
   assert.equal(await controller.load(), "network");
-  assert.equal(requestCount, 1);
-  assert.match(storage.values.get("rabbisir-official-app-releases-v1"), /Rabbisir 0\.1\.0/);
-  assert.match(documentObject.list.textContent, /Maintenance update/);
+  assert.equal(requestCount, 2);
+  assert.match(storage.values.get("rabbisir-official-app-releases-v2"), /"schemaVersion":2/);
+  assert.match(storage.values.get("rabbisir-official-app-releases-v2"), /"history"/);
+  assert.equal(documentObject.list.children.length, feed.releases.length);
+  assert.match(documentObject.list.textContent, /Build 6/);
+  assert.match(documentObject.list.textContent, /Feature update/);
+  assert.match(documentObject.list.textContent, /Capability improvements/);
+  assert.match(documentObject.list.textContent, /Bug fixes/);
+  assert.match(documentObject.list.textContent, /Download DMG/);
   assert.equal(documentObject.list.getAttribute("aria-busy"), "false");
 }
 
@@ -246,7 +331,9 @@ assert.throws(() => verifySourceReceipt(feed, mismatchedSourceReceipt), /source 
   let finishRequest;
   const controller = controllerFor({
     documentObject,
-    fetchFunction: () => new Promise((resolve) => { finishRequest = resolve; }),
+    fetchFunction: (url) => url === fallbackFeedURL
+      ? Promise.resolve({ ok: true, json: async () => clone(feed) })
+      : new Promise((resolve) => { finishRequest = resolve; }),
     storage: createStorage(),
   });
   const loading = controller.load();
@@ -254,7 +341,7 @@ assert.throws(() => verifySourceReceipt(feed, mismatchedSourceReceipt), /source 
   controller.rerender();
   assert.equal(documentObject.status.textContent, "Loading official release information…");
   assert.equal(documentObject.list.getAttribute("aria-busy"), "true");
-  finishRequest({ ok: true, json: async () => clone(feed) });
+  finishRequest({ ok: true, json: async () => clone(authorityFeed) });
   assert.equal(await loading, "network");
 }
 
@@ -278,7 +365,26 @@ assert.throws(() => verifySourceReceipt(feed, mismatchedSourceReceipt), /source 
 
 {
   const documentObject = createFakeDocument();
-  const storage = createStorage({ feed, savedAt: 1 });
+  const requestedURLs = [];
+  const controller = controllerFor({
+    documentObject,
+    fetchFunction: async (url) => {
+      requestedURLs.push(url);
+      if (url === feedURL) return { ok: false, status: 503 };
+      assert.equal(url, fallbackFeedURL);
+      return { ok: true, json: async () => clone(feed) };
+    },
+    storage: createStorage(),
+  });
+  assert.equal(await controller.load(), "bundled-fallback");
+  assert.deepEqual(requestedURLs, [feedURL, fallbackFeedURL]);
+  assert.equal(documentObject.list.children.length, feed.releases.length);
+  assert.equal(documentObject.status.textContent, "Showing verified fallback release information while the live source is unavailable.");
+}
+
+{
+  const documentObject = createFakeDocument();
+  const storage = createStorage({ feed: authorityFeed, history: feed, savedAt: 1 });
   const controller = controllerFor({
     documentObject,
     fetchFunction: async () => ({ ok: false, status: 429 }),
@@ -286,7 +392,7 @@ assert.throws(() => verifySourceReceipt(feed, mismatchedSourceReceipt), /source 
   });
   assert.equal(await controller.load(), "saved-fallback");
   assert.equal(documentObject.list.children.length, feed.releases.length);
-  assert.equal(documentObject.status.textContent, "Showing saved release information while the live source is unavailable.");
+  assert.equal(documentObject.status.textContent, "Showing verified fallback release information while the live source is unavailable.");
 }
 
 {
@@ -307,13 +413,18 @@ assert.throws(() => verifySourceReceipt(feed, mismatchedSourceReceipt), /source 
   const documentObject = createFakeDocument();
   const controller = controllerFor({
     documentObject,
-    fetchFunction: async () => ({ ok: true, json: async () => clone(feed) }),
+    fetchFunction: async (url) => ({
+      ok: true,
+      json: async () => clone(url === feedURL ? authorityFeed : feed),
+    }),
     storage: createStorage(),
   });
   await controller.load();
   documentObject.documentElement.lang = "zh-CN";
   controller.rerender();
-  assert.match(documentObject.list.textContent, /维护更新/);
+  assert.match(documentObject.list.textContent, /功能更新/);
+  assert.match(documentObject.list.textContent, /能力优化/);
+  assert.match(documentObject.list.textContent, /Bug 修复/);
   assert.equal(documentObject.status.textContent, "正式版本信息已更新。");
 }
 
