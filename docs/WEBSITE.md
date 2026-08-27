@@ -62,15 +62,17 @@ bundled v0.1.4 snapshot rather than showing a blank page. Rolling back the websi
 redeploying the previous Pages commit; rolling back release data means restoring the previous
 validated release-repository commit. These remain separate actions and results.
 
-The schema-4 `PagesSourceManifest.json` remains the immutable v0.1.4 legacy DMG/Appcast deployment
-snapshot. Its product and website-tooling provenance describe that snapshot, not this later static
-page-code migration; the current website source is identified by its public Git commit and Pages run.
+The schema-4 `PagesSourceManifest.json` retains the v0.1.4 legacy DMG deployment snapshot and records
+the one-time signed Appcast bridge described below. Its product and website-tooling provenance
+describe the original snapshot, not later static page-code or bridge commits; current website source
+is identified by its public Git commit and Pages run.
 
-The v0.1.4 `site/appcast.xml` is retained byte-for-byte as the legacy update channel. It may be
-replaced once, only after the release owner provides a signed bridge whose enclosure identifies the
-next official release in `Rabbisir-Releases`. Until that receipt exists, the old feed remains intact;
-the website never manufactures an enclosure or signature. After the bridge, the release repository's
-raw `appcast.xml` is the sole authority for newer installations.
+The legacy `site/appcast.xml` was replaced exactly once with the signed v0.2.0/build-7 authoritative
+Appcast after the release owner supplied and independently read back the first formal successor in
+`Rabbisir-Releases`. This bridge lets installed v0.1.4 clients reach that successor; the website did
+not manufacture or edit its enclosure or signature. After this deployment, the release repository's
+raw `appcast.xml` is the sole authority for newer installations and this Pages bridge must not change
+again.
 
 ## Direct download continuity
 
@@ -97,12 +99,13 @@ Rabbisir 标识、创作者头像和微信联系二维码均遵守上文列出�
 Release URL 与资产闭包。页面严格校验后展示；五分钟缓存失效后重新请求，失败时先保留已验证缓存，
 最后回退到站内 v0.1.4 schema-1 快照，不会白屏。站内快照还会补齐权威数据尚未迁入的历史版本；
 同一显示版本冲突时始终以线上 schema 2 为准。以后正式版本只更新发行仓库数据，不再重新部署整站。
-schema-4 `PagesSourceManifest.json` 只描述 v0.1.4 旧 DMG/Appcast 部署快照；本次页面源码以公开
-Git commit 与 Pages run 为准，不把旧工具 provenance 重称为本次迁移来源。
+schema-4 `PagesSourceManifest.json` 保留 v0.1.4 旧 DMG 部署快照，并记录下述一次性已签名 Appcast
+桥接；原有 product/website-tooling provenance 仍只描述最初快照。后续页面与桥接源码以公开 Git
+commit 与 Pages run 为准，不把旧工具 provenance 重称为本次迁移来源。
 
-旧 `site/appcast.xml` 保持 v0.1.4 已签名原字节。只有发行负责人提供指向下一正式版本且签名、
-enclosure 均已回读的桥接回执后，官网才能对它做一次替换；当前不得猜测或生成更新条目。桥接完成后，
-新安装版只使用发行仓库 raw `appcast.xml` 权威 feed。
+旧 `site/appcast.xml` 已在发行负责人交付并回读首个正式 successor 后，原字节替换为权威的
+v0.2.0/build-7 已签名 Appcast，使已安装的 v0.1.4 用户可到达该版本。官网没有生成或修改 enclosure
+与签名；这次桥接完成后不得再次改写。新安装版只使用发行仓库 raw `appcast.xml` 权威 feed。
 
 首页主要下载操作永久固定使用
 `https://github.com/readysteadyscience/Rabbisir-Releases/releases/latest/download/Rabbisir.dmg`。

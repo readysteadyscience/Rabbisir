@@ -10,8 +10,8 @@
   "files": [
     {
       "name": "appcast.xml",
-      "sha256": "1d06a8fe79be8b99bde3c84e45c29f2abf49993526d211f925aa7df8a8dc6a2e",
-      "size": 1336
+      "sha256": "6fe6728e9e6ebc804b72a789ea336b72f407144f75260ef40b1b08c62c63d8d6",
+      "size": 1345
     },
     {
       "name": "checksums.txt",
@@ -78,7 +78,7 @@
     "downloadsSHA256": "7ae22df4c74826c1d841cb8e469feb28f255d2d0380d7ae1add5b77a77236aad",
     "governanceSHA256": "934d38fafaf3826171a3d8143919490dbcca5b1a0f8b4193ef8b99426c4e2928",
     "materializerSHA256": "c6de718a240de8177f5ec32398604d30877467e3ba82395d93a9341d9478518a",
-    "pagesSHA256": "90422755702031f72dee17416b542458628094d6da6f44f0db5ff5a4d0cc1b05",
+    "pagesSHA256": "88c16e292ff131bb25631179d6d79cdae7796f5fe3933a564ec649d0822669e4",
     "publicRepositorySHA256": "a3c8223928faf7844d7ef0848860559e77b464e9eaada58344357763f47501ac"
   },
   "workflow": {
