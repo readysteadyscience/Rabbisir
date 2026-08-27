@@ -725,7 +725,6 @@ const expectedChecksums = [
 ].sort();
 if (JSON.stringify(checksumLines) !== JSON.stringify(expectedChecksums)) fail("checksums and release assets differ");
 const appcast = fs.readFileSync(path.join(root, "site/appcast.xml"), "utf8");
-const archive = release.assets.find((asset) => asset.name.endsWith(".zip"));
 const appcastWithoutComments = appcast.replace(/<!--[\s\S]*?-->/g, "");
 const sparkleMetadataValues = (name) => {
   const values = [];
@@ -746,10 +745,15 @@ const hasExactSparkleMetadata = (name, expected) => {
   const values = sparkleMetadataValues(name);
   return values.length > 0 && values.every((value) => value === expected);
 };
-if (!archive || !appcast.includes("production") || !appcast.includes(archive.url) ||
-    !hasExactSparkleMetadata("shortVersionString", "0.1.4") ||
-    !hasExactSparkleMetadata("version", "6"))
-  fail("Appcast semantics differ from the frozen production Release");
+const bridgeEnclosureURL = "https://github.com/readysteadyscience/Rabbisir-Releases/releases/download/v0.2.0/Rabbisir-0.2.0-7.zip";
+const bridgeEnclosures = [...appcastWithoutComments.matchAll(/<enclosure\b([^>]*)\/?\s*>/g)];
+if (sha(path.join(root, "site/appcast.xml")) !== "6fe6728e9e6ebc804b72a789ea336b72f407144f75260ef40b1b08c62c63d8d6" ||
+    bridgeEnclosures.length !== 1 || !appcast.includes("production") ||
+    !bridgeEnclosures[0][1].includes(`url="${bridgeEnclosureURL}"`) ||
+    !bridgeEnclosures[0][1].includes('length="133591473"') ||
+    !hasExactSparkleMetadata("shortVersionString", "0.2.0") ||
+    !hasExactSparkleMetadata("version", "7"))
+  fail("legacy Appcast bridge differs from the signed v0.2.0 successor");
 const downloads = fs.readFileSync(path.join(root, "site/DOWNLOADS.md"), "utf8");
 if (/No official Rabbisir installation asset is available|目前尚无可用的 Rabbisir 官方安装包/.test(downloads) ||
     !downloads.includes(release.releaseURL) || !downloads.includes(release.stableDownloadURL) ||
